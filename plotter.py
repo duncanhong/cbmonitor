@@ -4,6 +4,8 @@ import subprocess
 import sys
 from tempfile import mkdtemp
 
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 
@@ -61,9 +63,9 @@ def parse_args():
     return args[0]
 
 
-def main():
+def main(db_name):
     # parse database name from cli arguments
-    db_name = parse_args()
+    #db_name = parse_args()
 
     # initialize seriesly client
     db = Seriesly()[db_name]
@@ -86,7 +88,7 @@ def main():
         print "PDF report was successfully generated!"
     except OSError:
         print "All images saved to: {0}".format(outdir)
-
+    return outdir
 
 if __name__ == '__main__':
     main()
