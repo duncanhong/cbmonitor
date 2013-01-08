@@ -9,6 +9,15 @@ matplotlib.use('Agg')
 from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 
+STATS = ["memUsed"]
+
+def stats_filter(metric):
+    if len(STATS) == 0:
+        return True
+    for x in STATS:
+        if x.find(metric) != -1:
+            return True
+    return False
 
 def get_metric(db, metric):
     """Query data using metric as key"""
@@ -79,7 +88,7 @@ def main(db_name):
     outdir = mkdtemp()
     for metric in all_keys:
         print metric
-        if '/' not in metric:  # views and xdcr stuff
+        if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
             keys, values = get_metric(db, metric)
             plot_metric(metric, keys, values, outdir)
 
