@@ -9,7 +9,7 @@ matplotlib.use('Agg')
 from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 
-STATS = []
+STATS = ["memUsed"]
 
 def stats_filter(metric):
     if len(STATS) == 0:
