@@ -2,12 +2,14 @@
 from optparse import OptionParser
 import subprocess
 import sys
+import time
 from tempfile import mkdtemp
 
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
+from cache import ObjCacher, CacheHelper
 
 STATS = ["memUsed"]
 
@@ -78,6 +80,12 @@ def main(db_name):
 
     # initialize seriesly client
     db = Seriesly()[db_name]
+
+    # get system test phase info
+    graph_phases = CacheHelper.graph_phases()
+    if len(graph_phases) > 0:
+        for phases in graph_phases:
+            print phases.graph_phase_info
 
     # get a set of all unique keys
     all_docs = db.get_all()
