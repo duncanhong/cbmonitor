@@ -1,4 +1,5 @@
 import os
+import sys
 import urllib2
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Image
