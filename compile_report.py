@@ -9,35 +9,37 @@ from optparse import OptionParser
 
 def parse_args():
     """Parse CLI arguments"""
-    usage = "usage: %prog database\n\n" +\
-            "Example: %prog fast "
+    usage = "usage: %prog database ip1,ip2\n\n" +\
+            "Example: %prog fast 10.1.1.1,10.1.1.2"
 
     parser = OptionParser(usage)
     options, args = parser.parse_args()
 
-    if len(args) != 1:
+    if len(args) != 2:
         parser.print_help()
         sys.exit()
 
-    return args[0]
+    return args
 
-db_name = parse_args()
+db_name = parse_args()[0]
+host_ips = parse_args()[1].split(",")
 #plot_path = "couchbase-2.0/cbmonitor/plotter.py " + db_name 
 #path = os.system(plot_path)
 
-path = plotter.main(db_name)
-#print path
+for host_ip in host_ips:
+    path = plotter.main(db_name, host_ip)
+    #print path
 
-filenames = []
-for infile in glob.glob(os.path.join(path, '*.png')):
+    filenames = []
+    for infile in glob.glob(os.path.join(path, '*.png')):
 	filenames.append(infile)
 
-w = 400
-parts = []
-doc = SimpleDocTemplate("report_{0}.pdf".format(db_name), pagesize=letter)
-for i in filenames:
+    w = 400
+    parts = []
+    doc = SimpleDocTemplate("report_{0}_{1}.pdf".format(db_name, host_ip), pagesize=letter)
+    for i in filenames:
 	img = utils.ImageReader(i)
 	iw, ih = img.getSize()
 	aspect = ih / float(iw)
 	parts.append(Image(i, width=w, height=w * aspect))
-doc.build(parts)
+        doc.build(parts)
