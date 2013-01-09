@@ -42,4 +42,4 @@ for host_ip in host_ips:
 	iw, ih = img.getSize()
 	aspect = ih / float(iw)
 	parts.append(Image(i, width=w, height=w * aspect))
-        doc.build(parts)
+    doc.build(parts)
