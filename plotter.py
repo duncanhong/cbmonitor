@@ -11,7 +11,7 @@ from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 from cache import ObjCacher, CacheHelper
 
-STATS = ["memUsed"]
+STATS = ["mc-curr_items"]
 
 def stats_filter(metric):
     if len(STATS) == 0:
@@ -74,37 +74,48 @@ def parse_args():
     return args[0]
 
 
-def main(db_name):
+def main(db_name, host_ip):
     # parse database name from cli arguments
     #db_name = parse_args()
 
     # initialize seriesly client
     db = Seriesly()[db_name]
 
-    # get system test phase info
+    # plot all metrics to PNG images
+    outdir = mkdtemp()
+    
+    # get system test phase info and plot phase by phase
     graph_phases = CacheHelper.graph_phases()
     if len(graph_phases) > 0:
         for phases in graph_phases:
-            print phases.graph_phase_info
+            #print phases.graph_phase_info
+            num_phases = len(phases)
+            for i in range(num_phases):
+                start_time = phases[str(i)].values()[0]
+                end_time =0
+                if i == num_phases-1:
+                    end_time = time.time()
+                else:
+                    end_time = phases[str(i+1)].values()[0]
+                    
+                
+                # get a set of all unique keys based on time range
+                all_docs = db.get_all()
+                all_keys = set(key for doc in all_docs.itervalues()
+                               for key in doc.iterkeys())
 
-    # get a set of all unique keys
-    all_docs = db.get_all()
-    all_keys = set(key for doc in all_docs.itervalues()
-                       for key in doc.iterkeys())
 
-    # plot all metrics to PNG images
-    outdir = mkdtemp()
-    for metric in all_keys:
-        print metric
-        if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
-            keys, values = get_metric(db, metric)
-            plot_metric(metric, keys, values, outdir)
+                for metric in all_keys:
+                    #print metric
+                    if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
+                        keys, values = get_metric(db, metric)
+                        plot_metric(metric, keys, values, outdir)
 
-    try:
-        subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
-        print "PDF report was successfully generated!"
-    except OSError:
-        print "All images saved to: {0}".format(outdir)
+                try:
+                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
+                    print "PDF report was successfully generated!"
+                except OSError:
+                    print "All images saved to: {0}".format(outdir)
     return outdir
 
 if __name__ == '__main__':
