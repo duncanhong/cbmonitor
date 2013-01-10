@@ -23,7 +23,7 @@ def parse_args():
 
     return args
 
-length = len(parse_args)
+length = len(parse_args())
 db_name = parse_args()[0]
 host_ips = parse_args()[1].split(",")
 buckets_names = parse_args()[2].split(",")
