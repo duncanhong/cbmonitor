@@ -28,8 +28,6 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
        query_params = { 'group': 15000,  # 15 seconds
                         'ptr': '/{0}'.format(metric),
                         'reducer': 'avg',
-                        'f': 'mc-host',
-                        'fv': host_ip,
                         'from': start_time,
                         'to': end_time
                       }
@@ -78,7 +76,7 @@ def parse_args():
     return args[0]
 
 
-def main(db_name, host_ip, bucket_name, query_params):
+def plot_all_phases(db_name, host_ip, bucket_name, query_params):
     # parse database name from cli arguments
     #db_name = parse_args()
 
@@ -120,5 +118,5 @@ def main(db_name, host_ip, bucket_name, query_params):
                     print "All images saved to: {0}".format(outdir)
     return outdir
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+#    main()
