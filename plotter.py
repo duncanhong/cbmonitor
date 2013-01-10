@@ -11,7 +11,7 @@ from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 from cache import ObjCacher, CacheHelper
 
-STATS = ["mc-curr_items"]
+STATS = ["mc-curr_items", "mc-curr_items_tot"]
 
 def stats_filter(metric):
     if len(STATS) == 0:
