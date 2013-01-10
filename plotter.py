@@ -17,7 +17,7 @@ def stats_filter(metric):
     if len(STATS) == 0:
         return True
     for x in STATS:
-        if x.find(metric) != -1:
+        if x == metric:
             return True
     return False
 
@@ -59,7 +59,7 @@ def plot_metric(metric, keys, values, outdir, phase_num, phase_desc):
     grid()
 
     ax.plot(keys, values, '.')
-    fig.savefig('{0}/{1}-phase {2}-{3}.png'.format(outdir, metric, str(phase_num), phase_desc))
+    fig.savefig('{0}/{1}_phase_{2}_{3}.png'.format(outdir, metric, str(phase_num), phase_desc))
 
 def parse_args():
     """Parse CLI arguments"""
