@@ -33,7 +33,7 @@ if length > 3:
 
 for host_ip in host_ips:
     for bucket_name in bucket_name:
-        path = plotter.main(db_name, host_ip, bucket_name, query_params)
+        path = plotter.plot_all_phases(db_name, host_ip, bucket_name, query_params)
 
         filenames = []
         for infile in glob.glob(os.path.join(path, '*.png')):
