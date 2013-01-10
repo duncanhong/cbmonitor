@@ -99,11 +99,14 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
             num_phases = len(phases)
             for i in range(num_phases):
                 start_time = phases[str(i)].values()[0]
-                end_time =0
+                start_time = int(start_time[:10])
+                end_time = 0
                 if i == num_phases-1:
-                    end_time = time.time()
+                    end_time = str(time.time())
+                    end_time = int(end_time[:10])
                 else:
                     end_time = phases[str(i+1)].values()[0]
+                    end_time = int(end_time[:10])
 
                 for metric in all_keys:
                     #print metric
