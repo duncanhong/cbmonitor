@@ -21,15 +21,17 @@ def stats_filter(metric):
             return True
     return False
 
-def get_metric(db, metric, host_ip, bucket_name, query_params):
+def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time):
     """Query data using metric as key"""
     # get query response
     if query_params == ''
        query_params = { 'group': 15000,  # 15 seconds
                         'ptr': '/{0}'.format(metric),
-                        'reducer': 'avg'}
-                        'f': 'mc-host'
-                        'fv': host_ip
+                        'reducer': 'avg',
+                        'f': 'mc-host',
+                        'fv': host_ip,
+                        'from': start_time,
+                        'to': end_time
                       }
     response = db.query(query_params)
 
@@ -109,7 +111,7 @@ def main(db_name, host_ip, bucket_name, query_params):
                 for metric in all_keys:
                     #print metric
                     if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
-                        keys, values = get_metric(db, metric, host_ip, bucket_name, query_params)
+                        keys, values = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
                         plot_metric(metric, keys, values, outdir)
 
                 try:
