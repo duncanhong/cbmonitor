@@ -42,6 +42,7 @@ for host_ip in host_ips:
         w = 400
         parts = []
         doc = SimpleDocTemplate("report_{0}_{1}_{2}.pdf".format(db_name, host_ip, bucket_name), pagesize=letter)
+        filenames.reverse()
         for i in filenames:
 	    img = utils.ImageReader(i)
 	    iw, ih = img.getSize()
