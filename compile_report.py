@@ -32,7 +32,7 @@ if length > 3:
     query_params = json.loads(parse_args()[3])
 
 for host_ip in host_ips:
-    for bucket_name in bucket_name:
+    for bucket_name in bucket_names:
         path = plotter.plot_all_phases(db_name, host_ip, bucket_name, query_params)
 
         filenames = []
