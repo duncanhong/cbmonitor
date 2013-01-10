@@ -50,7 +50,7 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
 
     return timestamps, values
 
-def plot_metric(metric, keys, values, outdir):
+def plot_metric(metric, keys, values, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
     fig = figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -61,8 +61,7 @@ def plot_metric(metric, keys, values, outdir):
     grid()
 
     ax.plot(keys, values, '.')
-    fig.savefig('{0}/{1}.png'.format(outdir, metric))
-
+    fig.savefig('{0}/{1}-phase {2}-{3}.png'.format(outdir, metric, str(phase_num), phase_desc))
 
 def parse_args():
     """Parse CLI arguments"""
@@ -112,7 +111,7 @@ def main(db_name, host_ip, bucket_name, query_params):
                     #print metric
                     if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
                         keys, values = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
-                        plot_metric(metric, keys, values, outdir)
+                        plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0])
 
                 try:
                     subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
