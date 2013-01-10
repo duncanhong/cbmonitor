@@ -114,11 +114,11 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
                         keys, values = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
                         plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0])
 
-                try:
-                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
-                    print "PDF report was successfully generated!"
-                except OSError:
-                    print "All images saved to: {0}".format(outdir)
+#                try:
+#                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
+#                    print "PDF report was successfully generated!"
+#                except OSError:
+    print "All images saved to: {0}".format(outdir)
     return outdir
 
 #if __name__ == '__main__':
