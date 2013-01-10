@@ -94,8 +94,8 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
     # get system test phase info and plot phase by phase
     graph_phases = CacheHelper.graph_phases()
     if len(graph_phases) > 0:
-        for phases in graph_phases:
-            #print phases.graph_phase_info
+        for x in graph_phases:
+            phases = x.graph_phase_info
             num_phases = len(phases)
             for i in range(num_phases):
                 start_time = phases[str(i)].values()[0]
