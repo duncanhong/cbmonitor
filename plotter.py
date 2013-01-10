@@ -24,7 +24,7 @@ def stats_filter(metric):
 def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time):
     """Query data using metric as key"""
     # get query response
-    if query_params == ''
+    if query_params == '':
        query_params = { 'group': 15000,  # 15 seconds
                         'ptr': '/{0}'.format(metric),
                         'reducer': 'avg',
