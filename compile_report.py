@@ -12,7 +12,7 @@ import json
 def parse_args():
     """Parse CLI arguments"""
     usage = "usage: %prog database ip1,ip2 bucket_name plot_query\n\n" +\
-             Example: %prog fast 10.1.1.1,10.1.1.2 default {"group": 15000}"
+            "Example: %prog fast 10.1.1.1,10.1.1.2 default {\"group\": 15000}"
 
     parser = OptionParser(usage)
     options, args = parser.parse_args()
