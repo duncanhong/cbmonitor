@@ -26,7 +26,7 @@ def parse_args():
 length = len(parse_args())
 db_name = parse_args()[0]
 host_ips = parse_args()[1].split(",")
-buckets_names = parse_args()[2].split(",")
+bucket_names = parse_args()[2].split(",")
 query_params = ''
 if length > 3:
     query_params = json.loads(parse_args()[3])
