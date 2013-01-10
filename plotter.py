@@ -21,12 +21,16 @@ def stats_filter(metric):
             return True
     return False
 
-def get_metric(db, metric):
+def get_metric(db, metric, host_ip, bucket_name, query_params):
     """Query data using metric as key"""
     # get query response
-    query_params = {'group': 15000,  # 15 seconds
-                    'ptr': '/{0}'.format(metric),
-                    'reducer': 'avg'}
+    if query_params == ''
+       query_params = { 'group': 15000,  # 15 seconds
+                        'ptr': '/{0}'.format(metric),
+                        'reducer': 'avg'}
+                        'f': 'mc-host'
+                        'fv': host_ip
+                      }
     response = db.query(query_params)
 
     # convert data and generate sorted lists of timestamps and values
@@ -43,7 +47,6 @@ def get_metric(db, metric):
     timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
 
     return timestamps, values
-
 
 def plot_metric(metric, keys, values, outdir):
     """Plot chart and save it as PNG file"""
@@ -74,7 +77,7 @@ def parse_args():
     return args[0]
 
 
-def main(db_name, host_ip):
+def main(db_name, host_ip, bucket_name, query_params):
     # parse database name from cli arguments
     #db_name = parse_args()
 
@@ -84,6 +87,11 @@ def main(db_name, host_ip):
     # plot all metrics to PNG images
     outdir = mkdtemp()
     
+    # get a set of all unique keys based on time range
+    all_docs = db.get_all()
+    all_keys = set(key for doc in all_docs.itervalues()
+                    for key in doc.iterkeys())
+
     # get system test phase info and plot phase by phase
     graph_phases = CacheHelper.graph_phases()
     if len(graph_phases) > 0:
@@ -97,18 +105,11 @@ def main(db_name, host_ip):
                     end_time = time.time()
                 else:
                     end_time = phases[str(i+1)].values()[0]
-                    
-                
-                # get a set of all unique keys based on time range
-                all_docs = db.get_all()
-                all_keys = set(key for doc in all_docs.itervalues()
-                               for key in doc.iterkeys())
-
 
                 for metric in all_keys:
                     #print metric
                     if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
-                        keys, values = get_metric(db, metric)
+                        keys, values = get_metric(db, metric, host_ip, bucket_name, query_params)
                         plot_metric(metric, keys, values, outdir)
 
                 try:
