@@ -53,7 +53,7 @@ def plot_metric(metric, keys, values, outdir, phase_num, phase_desc):
     fig = figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.set_title(metric)
+    ax.set_title('{0}_phase_{1}_{2}.png'.format(metric, str(phase_num), phase_desc))
     ax.set_xlabel('Time elapsed (sec)')
 
     grid()
