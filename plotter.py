@@ -94,7 +94,6 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
 
     # get system test phase info and plot phase by phase
     all_event_docs = db_event.get_all()
-    print all_event_docs
     phases = {}
     for doc in all_event_docs.itervalues():
         phases[doc.keys()[0]] = doc.values()[0]
