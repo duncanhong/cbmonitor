@@ -82,6 +82,7 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
 
     # initialize seriesly client
     db = Seriesly()[db_name]
+    db_event = Seriesly()['event']
 
     # plot all metrics to PNG images
     outdir = mkdtemp()
@@ -92,27 +93,28 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
                     for key in doc.iterkeys())
 
     # get system test phase info and plot phase by phase
-    graph_phases = CacheHelper.graph_phases()
-    if len(graph_phases) > 0:
-        for x in graph_phases:
-            phases = x.graph_phase_info
-            num_phases = len(phases)
-            for i in range(num_phases):
-                start_time = phases[str(i)].values()[0]
-                start_time = int(start_time[:10])
-                end_time = 0
-                if i == num_phases-1:
-                    end_time = str(time.time())
-                    end_time = int(end_time[:10])
-                else:
-                    end_time = phases[str(i+1)].values()[0]
-                    end_time = int(end_time[:10])
+    all_event_docs = db_event.get_all()
+    phases = {}
+    for doc in all_event_docs.itervalues():
+        phases[doc.keys()[0]] = [doc.values()[0]]
 
-                for metric in all_keys:
-                    #print metric
-                    if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
-                        keys, values = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
-                        plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0])
+    num_phases = len(phases)
+    for i in range(num_phases):
+        start_time = phases[str(i)].values()[0]
+        start_time = int(start_time[:10])
+        end_time = 0
+        if i == num_phases-1:
+            end_time = str(time.time())
+            end_time = int(end_time[:10])
+        else:
+            end_time = phases[str(i+1)].values()[0]
+            end_time = int(end_time[:10])
+
+        for metric in all_keys:
+            #print metric
+            if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
+                keys, values = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
+                plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0])
 
 #                try:
 #                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
