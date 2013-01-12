@@ -11,7 +11,10 @@ from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 from cache import ObjCacher, CacheHelper
 
-STATS = ["mc-curr_items", "mc-curr_items_tot"]
+STATS = ["mc-curr_items", "mc-curr_items_tot", "mc-ep_queue_size", "mc-ep_overhead", "mc-ep_oom_errors",
+         "mc-ep_bg_fetched", "mc-ep_tap_bg_fetched", "mc-ep_warmup_time", "mc-vb_active_perc_mem_resident",
+         "mc-vb_replica_perc_mem_resident", "mc-vb_active_ops_delete", "mc-vb_active_ops_create",
+         "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
 
 def stats_filter(metric):
     if len(STATS) == 0:
@@ -25,12 +28,21 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
     """Query data using metric as key"""
     # get query response
     if query_params == '':
-       query_params = { 'group': 15000,  # 15 seconds
-                        'ptr': '/{0}'.format(metric),
-                        'reducer': 'avg',
-                        'from': start_time,
-                        'to': end_time
+       query_params = { "group": 15000,  # 15 seconds
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "avg",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": "mc-host",
+                        "fv": host_ip
                       }
+    else:
+        query_params["ptr"] = "/{0}".format(metric)
+        query_params["from"] = start_time
+        query_params["to"] = end_time
+        query_params["f"] = "mc-host"
+        query_params["fv"] = host_ip
+
     response = db.query(query_params)
 
     # convert data and generate sorted lists of timestamps and values
@@ -46,14 +58,14 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
     # Substract first timestamp; conver to seconds
     timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
 
-    return timestamps, values
+    return timestamps, values, query_params['reducer']
 
-def plot_metric(metric, keys, values, outdir, phase_num, phase_desc):
+def plot_metric(metric, keys, values, outdir, phase_num, phase_desc, reducer):
     """Plot chart and save it as PNG file"""
     fig = figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.set_title('{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc))
+    ax.set_title('{0}_phase_{1}_{2}({3})'.format(metric, str(phase_num), phase_desc, reducer))
     ax.set_xlabel('Time elapsed (sec)')
 
     grid()
@@ -113,8 +125,8 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
         for metric in all_keys:
             #print metric
             if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
-                keys, values = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
-                plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0])
+                keys, values, reducer = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
+                plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0], reducer)
 
 #                try:
 #                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
