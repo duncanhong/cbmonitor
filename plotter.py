@@ -32,9 +32,9 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
-                        "to": end_time,
-                        "f": "mc-host",
-                        "fv": host_ip
+                        "to": end_time
+#                        "f": "mc-host",
+#                        "fv": host_ip
                       }
     else:
         query_params["ptr"] = "/{0}".format(metric)
