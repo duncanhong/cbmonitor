@@ -40,8 +40,8 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
         query_params["ptr"] = "/{0}".format(metric)
         query_params["from"] = start_time
         query_params["to"] = end_time
-        query_params["f"] = "mc-host"
-        query_params["fv"] = host_ip
+        query_params["f"] = ["/mc-host", "/mc-bucket"]
+        query_params["fv"] = [host_ip, bucket_name]
 
     response = db.query(query_params)
 
