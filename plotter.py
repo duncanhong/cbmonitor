@@ -33,7 +33,7 @@ def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_t
                         "reducer": "avg",
                         "from": start_time,
                         "to": end_time,
-                        "f": ["mc-host", "mc-bucket"],
+                        "f": ["/mc-host", "/mc-bucket"],
                         "fv": [host_ip, bucket_name]
                       }
     else:
