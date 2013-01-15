@@ -27,7 +27,7 @@ STATS_TIME = ["mc-ep_warmup_time"]
 def get_query(metric, host_ip, bucket_name, start_time, end_time):
     """Query data using metric as key"""
     # get query response
-    queries = {}
+    query = {}
     if metric in STATS_OT:
         query_params = { "group": 15000,  # 15 seconds
                         "ptr": '/{0}'.format(metric),
