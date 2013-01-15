@@ -39,7 +39,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["over_time"] = query_params
     if metric in STATS_AVG:
-        query_params = { "group": (end_time - start_time),
+        query_params = { "group": (end_time - start_time-100),
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
@@ -49,7 +49,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["average"] = query_params
     if metric in STATS_90:
-        query_params = { "group": (end_time - start_time),
+        query_params = { "group": (end_time - start_time-100),
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
                         "from": start_time,
@@ -59,7 +59,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["90th"] = query_params
     if metric in STATS_TIME:
-        query_params = { "group": (end_time - start_time),
+        query_params = { "group": (end_time - start_time-100),
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
                         "from": start_time,
@@ -73,7 +73,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
 
 def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
-    if "overtime" in query.keys():
+    if "over_time" in query.keys():
         response = db.query(query["over_time"])
 
         # convert data and generate sorted lists of timestamps and values
