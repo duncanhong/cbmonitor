@@ -96,7 +96,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         data = dict((k, v[0]) for k, v in response.iteritems())
         values = list()
 
-        for timestamp, value in sorted(data.iteritems()):
+        for timestamp, value in data.iteritems():
             values.append(value)
             
         sum = 0
@@ -111,7 +111,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         data = dict((k, v[0]) for k, v in response.iteritems())
         values = list()
 
-        for timestamp, value in sorted(data.iteritems()):
+        for timestamp, value in data.iteritems():
             values.append(value)
         values.sort()
         pos = int(len(values) * 0.9)
