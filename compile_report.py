@@ -30,7 +30,7 @@ bucket_names = parse_args()[2].split(",")
 
 for host_ip in host_ips:
     for bucket_name in bucket_names:
-        path = plotter.plot_all_phases(db_name, host_ip, bucket_name, query_params)
+        path = plotter.plot_all_phases(db_name, host_ip, bucket_name)
 
         filenames = []
         for infile in glob.glob(os.path.join(path, '*.png')):
