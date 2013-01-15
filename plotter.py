@@ -39,7 +39,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["over_time"] = query_params
     if metric in STATS_AVG:
-        query_params = { "group": (end_time - start_time-100),
+        query_params = { "group": (end_time - start_time-100)*1000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
@@ -49,7 +49,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["average"] = query_params
     if metric in STATS_90:
-        query_params = { "group": (end_time - start_time-100),
+        query_params = { "group": (end_time - start_time-100)*1000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
                         "from": start_time,
@@ -59,7 +59,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["90th"] = query_params
     if metric in STATS_TIME:
-        query_params = { "group": (end_time - start_time-100),
+        query_params = { "group": (end_time - start_time-100)*1000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
                         "from": start_time,
