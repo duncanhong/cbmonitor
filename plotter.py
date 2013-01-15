@@ -122,7 +122,7 @@ def plot_metric_overtime(metric, keys, values, outdir, phase_num, phase_desc):
     ax.plot(keys, values, '.')
     fig.savefig('{0}/{1}_phase_{2}_{3}_overtime.png'.format(outdir, metric, str(phase_num), phase_desc))
 
-def plot_all_phases(db_name, host_ip, bucket_name, query_params):
+def plot_all_phases(db_name, host_ip, bucket_name):
     # initialize seriesly client
     db = Seriesly()[db_name]
     db_event = Seriesly()['event']
