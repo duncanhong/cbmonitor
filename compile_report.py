@@ -11,8 +11,8 @@ import json
 
 def parse_args():
     """Parse CLI arguments"""
-    usage = "usage: %prog database ip1,ip2 bucket_name plot_query\n\n" +\
-            "Example: %prog fast 10.1.1.1,10.1.1.2 default {\"group\": 15000}"
+    usage = "usage: %prog database ip1,ip2 bucket_name \n\n" +\
+            "Example: %prog fast 10.1.1.1,10.1.1.2 default"
 
     parser = OptionParser(usage)
     options, args = parser.parse_args()
@@ -27,9 +27,6 @@ length = len(parse_args())
 db_name = parse_args()[0]
 host_ips = parse_args()[1].split(",")
 bucket_names = parse_args()[2].split(",")
-query_params = ''
-if length > 3:
-    query_params = json.loads(parse_args()[3])
 
 for host_ip in host_ips:
     for bucket_name in bucket_names:
