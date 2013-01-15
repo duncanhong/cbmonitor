@@ -39,7 +39,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["over_time"] = query_params
     if metric in STATS_AVG:
-        query_params = { "group": (end_time - start_time-100)*1000,
+        query_params = { "group": 600000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
@@ -49,7 +49,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["average"] = query_params
     if metric in STATS_90:
-        query_params = { "group": (end_time - start_time-100)*1000,
+        query_params = { "group": 300000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
                         "from": start_time,
@@ -59,9 +59,9 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["90th"] = query_params
     if metric in STATS_TIME:
-        query_params = { "group": (end_time - start_time-100)*1000,
+        query_params = { "group": (end_time - start_time)*1000,
                         "ptr": '/{0}'.format(metric),
-                        "reducer": "max",
+                        "reducer": "any",
                         "from": start_time,
                         "to": end_time,
                         "f": ["/mc-host", "/mc-bucket"],
@@ -90,15 +90,41 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
         
         plot_metric_overtime(metric, timestamps, values, outdir, phase_num, phase_desc)
-        
-    for x in ["average", "90th", "absolute_time"]:
 
-        if x in query.keys():
-            response = db.query(query[x])
-            data = dict((k, v[0]) for k, v in response.iteritems())
-            value = data.values()[0]
-            plot_metric_single_value(metric, x, value, outdir, phase_num, phase_desc)
+    if "average" in query.keys():
+        response = db.query(query["average"])
+        data = dict((k, v[0]) for k, v in response.iteritems())
+        values = list()
+
+        for timestamp, value in sorted(data.iteritems()):
+            values.append(value)
+            
+        sum = 0
+        for x in values:
+            sum = sum + x
+        average_value = sum / len(values)
+            
+        plot_metric_single_value(metric, "average", average_value, outdir, phase_num, phase_desc)
+
+    if "90th" in query.keys():
+        response = db.query(query["90th"])
+        data = dict((k, v[0]) for k, v in response.iteritems())
+        values = list()
+
+        for timestamp, value in sorted(data.iteritems()):
+            values.append(value)
+        values.sort()
+        pos = int(len(values) * 0.9)
+        value = values[pos]
+
+        plot_metric_single_value(metric, "90th", value, outdir, phase_num, phase_desc)
         
+    if "absolute_time" in query.keys():
+        response = db.query(query["absolute_time"])
+        data = dict((k, v[0]) for k, v in response.iteritems())
+        value = data.values()[0]
+        plot_metric_single_value(metric, "absolute_time", value, outdir, phase_num, phase_desc)
+
 def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
     fig = figure()
