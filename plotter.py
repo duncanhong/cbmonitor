@@ -11,87 +11,118 @@ from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
 from cache import ObjCacher, CacheHelper
 
-STATS = ["mc-curr_items", "mc-curr_items_tot", "mc-ep_queue_size", "mc-ep_overhead", "mc-ep_oom_errors",
-         "mc-ep_bg_fetched", "mc-ep_tap_bg_fetched", "mc-ep_warmup_time", "mc-vb_active_perc_mem_resident",
-         "mc-vb_replica_perc_mem_resident", "mc-vb_active_ops_delete", "mc-vb_active_ops_create",
-         "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
+STATS_OT = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-curr_items", "mc-curr_items_tot",  "mc-ep_overhead", 
+            "mc-ep_oom_errors", "mc-ep_bg_fetched",
+            "mc-ep_tap_bg_fetched", "mc-ep_access_scanner_num_items", "mc-ep_tap_backfill_resident",
+            "mc-vb_active_perc_mem_resident", "mc-vb_replica_perc_mem_resident", "mc-vb_active_ops_delete",
+            "mc-vb_active_ops_create", "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
 
-def stats_filter(metric):
-    if len(STATS) == 0:
-        return True
-    for x in STATS:
-        if x == metric:
-            return True
-    return False
+STATS_AVG = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-ep_bg_max_wait", "mc-ep_bg_wait_avg", "mc-vb_active_ops_delete",
+             "mc-vb_active_ops_create", "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
 
-def get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time):
+STATS_90 = ["mc-ep_bg_max_wait", "mc-ep_bg_wait_avg"]
+
+STATS_TIME = ["mc-ep_warmup_time"]
+
+def get_query(metric, host_ip, bucket_name, start_time, end_time):
     """Query data using metric as key"""
     # get query response
-    if query_params == '':
-       query_params = { "group": 15000,  # 15 seconds
+    queries = {}
+    if metric in STATS_OT:
+        query_params = { "group": 15000,  # 15 seconds
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
                         "to": end_time,
                         "f": ["/mc-host", "/mc-bucket"],
                         "fv": [host_ip, bucket_name]
-                      }
-    else:
-        query_params["ptr"] = "/{0}".format(metric)
-        query_params["from"] = start_time
-        query_params["to"] = end_time
-        query_params["f"] = ["/mc-host", "/mc-bucket"]
-        query_params["fv"] = [host_ip, bucket_name]
+                       }
+        query["over_time"] = query_params
+    if metric in STATS_OT_AVG:
+        query_params = { "group": (end_time - start_time)
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "avg",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": ["/mc-host", "/mc-bucket"],
+                        "fv": [host_ip, bucket_name]
+                       }
+        query["average"] = query_params
+    if metric in STATS_AVG_90:
+        query_params = { "group": (end_time - start_time)
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "max",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": ["/mc-host", "/mc-bucket"],
+                        "fv": [host_ip, bucket_name]
+                       }
+        query["90th"] = query_params
+    if metric in STATS_TIME:
+        query_params = { "group": (end_time - start_time)
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "max",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": ["/mc-host", "/mc-bucket"],
+                        "fv": [host_ip, bucket_name]
+                       }
+        query["absolute_time"] = query_params
 
-    response = db.query(query_params)
+    return query
 
-    # convert data and generate sorted lists of timestamps and values
-    data = dict((k, v[0]) for k, v in response.iteritems())
+def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
-    timestamps = list()
-    values = list()
+    if "overtime" in query.keys():
+        response = db.query(query["over_time"])
 
-    for timestamp, value in sorted(data.iteritems()):
-        timestamps.append(int(timestamp))
-        values.append(value)
+        # convert data and generate sorted lists of timestamps and values
+        data = dict((k, v[0]) for k, v in response.iteritems())
 
-    # Substract first timestamp; conver to seconds
-    timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
+        timestamps = list()
+        values = list()
 
-    return timestamps, values, query_params['reducer']
+        for timestamp, value in sorted(data.iteritems()):
+            timestamps.append(int(timestamp))
+            values.append(value)
 
-def plot_metric(metric, keys, values, outdir, phase_num, phase_desc, reducer):
+        # Substract first timestamp; conver to seconds
+        timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
+        
+        plot_metric_overtime(metric, timestamps, values, outdir, phase_num, phase_desc)
+        
+    for x in ["average", "90th", "absolute_time"]:
+
+        if x in query.keys():
+            response = db.query(query[x])
+            data = dict((k, v[0]) for k, v in response.iteritems())
+            value = data.values()[0]
+            plot_metric_single_value(metric, x, value, outdir, phase_num, phase_desc)
+        
+def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
     fig = figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.set_title('{0}_phase_{1}_{2}({3})'.format(metric, str(phase_num), phase_desc, reducer))
+    ax.set_title('{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc))
+    ax.set_xlabel('{0} {1} value = {2}'.format(metric, stats_desc, value))
+
+    fig.savefig('{0}/{1}_phase_{2}_{3}_{4}.png'.format(outdir, metric, str(phase_num), phase_desc, stats_desc))
+
+def plot_metric_overtime(metric, keys, values, outdir, phase_num, phase_desc):
+    """Plot chart and save it as PNG file"""
+    fig = figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.set_title('{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc))
     ax.set_xlabel('Time elapsed (sec)')
 
     grid()
 
     ax.plot(keys, values, '.')
-    fig.savefig('{0}/{1}_phase_{2}_{3}.png'.format(outdir, metric, str(phase_num), phase_desc))
-
-def parse_args():
-    """Parse CLI arguments"""
-    usage = "usage: %prog database\n\n" +\
-            "Example: %prog ns_db "
-
-    parser = OptionParser(usage)
-    options, args = parser.parse_args()
-
-    if len(args) != 1:
-        parser.print_help()
-        sys.exit()
-
-    return args[0]
-
+    fig.savefig('{0}/{1}_phase_{2}_{3}_overtime.png'.format(outdir, metric, str(phase_num), phase_desc))
 
 def plot_all_phases(db_name, host_ip, bucket_name, query_params):
-    # parse database name from cli arguments
-    #db_name = parse_args()
-
     # initialize seriesly client
     db = Seriesly()[db_name]
     db_event = Seriesly()['event']
@@ -124,9 +155,10 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
 
         for metric in all_keys:
             #print metric
-            if '/' not in metric and stats_filter(metric) == True:  # views and xdcr stuff
-                keys, values, reducer = get_metric(db, metric, host_ip, bucket_name, query_params, start_time, end_time)
-                plot_metric(metric, keys, values, outdir, i,  phases[str(i)].keys()[0], reducer)
+            if '/' not in metric:  # views and xdcr stuff
+                query = get_query(metric, host_ip, bucket_name, start_time, end_time)
+                if len(query) > 0:
+                    plot_metric(db, metric, query, outdir, i,  phases[str(i)].keys()[0])
 
 #                try:
 #                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
@@ -134,6 +166,3 @@ def plot_all_phases(db_name, host_ip, bucket_name, query_params):
 #                except OSError:
     print "All images saved to: {0}".format(outdir)
     return outdir
-
-#if __name__ == '__main__':
-#    main()
