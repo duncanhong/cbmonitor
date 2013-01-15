@@ -101,11 +101,12 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
         values = [x for x in values if x is not None]
         sum = 0
-        for x in values:
-            if x is not None:
+        average_value = None
+        if len(values) > 0:
+            for x in values:
                 sum = sum + x
-        average_value = sum / len(values)
-            
+            average_value = sum / len(values)
+
         plot_metric_single_value(metric, "average", average_value, outdir, phase_num, phase_desc)
 
     if "90th" in query.keys():
@@ -117,9 +118,11 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             values.append(value)
 
         values = [x for x in values if x is not None]
-        values.sort()
-        pos = int(len(values) * 0.9)
-        value = values[pos]
+        value = None
+        if len(values) > 0:
+            values.sort()
+            pos = int(len(values) * 0.9)
+            value = values[pos]
 
         plot_metric_single_value(metric, "90th", value, outdir, phase_num, phase_desc)
         
