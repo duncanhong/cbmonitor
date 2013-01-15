@@ -38,7 +38,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "fv": [host_ip, bucket_name]
                        }
         query["over_time"] = query_params
-    if metric in STATS_OT_AVG:
+    if metric in STATS_AVG:
         query_params = { "group": (end_time - start_time),
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
@@ -48,7 +48,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "fv": [host_ip, bucket_name]
                        }
         query["average"] = query_params
-    if metric in STATS_AVG_90:
+    if metric in STATS_90:
         query_params = { "group": (end_time - start_time),
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
