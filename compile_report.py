@@ -30,14 +30,14 @@ bucket_names = parse_args()[2].split(",")
 
 for host_ip in host_ips:
     for bucket_name in bucket_names:
-        path = plotter.plot_all_phases(db_name, host_ip, bucket_name)
+        path, run_id = plotter.plot_all_phases(db_name, host_ip, bucket_name)
 
         filenames = []
         for infile in glob.glob(os.path.join(path, '*.png')):
 	    filenames.append(infile)
         w = 400
         parts = []
-        doc = SimpleDocTemplate("report_{0}_{1}_{2}.pdf".format(db_name, host_ip, bucket_name), pagesize=letter)
+        doc = SimpleDocTemplate("report_{0}_{1}_{2}_{3}.pdf".format(db_name, host_ip, bucket_name, run_id), pagesize=letter)
         filenames.sort()
         for i in filenames:
 	    img = utils.ImageReader(i)
