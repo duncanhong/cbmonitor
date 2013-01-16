@@ -175,7 +175,11 @@ def plot_all_phases(db_name, host_ip, bucket_name):
         phases[doc.keys()[0]] = doc.values()[0]
 
     num_phases = len(phases)
+    run_id = ''
     for i in range(num_phases):
+        if i == 0:
+            run_id = phases[str(i)]['run_id']
+
         start_time = phases[str(i)].values()[0]
         start_time = int(start_time[:10])
         end_time = 0
@@ -198,4 +202,4 @@ def plot_all_phases(db_name, host_ip, bucket_name):
 #                    print "PDF report was successfully generated!"
 #                except OSError:
     print "All images saved to: {0}".format(outdir)
-    return outdir
+    return outdir, run_id
