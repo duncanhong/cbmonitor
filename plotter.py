@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib.pyplot import figure, grid
 from seriesly import Seriesly
-from cache import ObjCacher, CacheHelper
+
 
 STATS_OT = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-curr_items", "mc-curr_items_tot",  "mc-ep_overhead", 
             "mc-ep_oom_errors", "mc-ep_bg_fetched",
