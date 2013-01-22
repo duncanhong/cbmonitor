@@ -71,7 +71,6 @@ def check_atop_proc(ip):
     return running
 
 def update_node_stats(db, sample, ip):
-    sample['host-ip'] = ip
     db.append(sample)
 
 def resource_monitor(interval=30):
