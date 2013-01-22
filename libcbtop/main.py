@@ -30,7 +30,7 @@ def main(server, itv=5, ctl=CTL, port=8091, path="/pools/default",
     mc_proc.start()
     
     atop_proc = multiprocessing.Process(target=atop.resource_monitor,
-        args=(interval=30))
+        args=(interval))
 
     atop_proc.daemon = True
     atop_proc.start()
