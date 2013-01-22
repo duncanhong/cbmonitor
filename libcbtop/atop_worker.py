@@ -39,6 +39,10 @@ def create_ssh_conn(server_ip = '', port=22, username = cfg.SSH_USER,
     shell = RemoteMachineShellConnection(node)
     return shell, node
 
+def restart_atop(ip):
+    stop_atop(ip)
+    start_atop(ip)
+
 def stop_atop(ip):
     cmd = "killall atop"
     exec_cmd(ip, cmd)
@@ -65,7 +69,6 @@ def check_atop_proc(ip):
         running = True
 
     return running
-
 
 def update_node_stats(db, sample, ip):
     sample['host-ip'] = ip
