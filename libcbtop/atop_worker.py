@@ -5,6 +5,9 @@ from seriesly import Seriesly
 from lib.membase.api.rest_client import RestConnection
 from lib.remote.remote_util import RemoteMachineShellConnection
 
+def _dict_to_obj(dict_):
+    return type('OBJ', (object,), dict_)
+
 def create_server_obj(server_ip=cfg.COUCHBASE_IP, port=cfg.COUCHBASE_PORT,
                       username=cfg.COUCHBASE_USER, password=cfg.COUCHBASE_PWD):
     serverInfo = { "ip" : server_ip,
