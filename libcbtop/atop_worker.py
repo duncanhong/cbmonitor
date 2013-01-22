@@ -4,7 +4,92 @@
 #two parser , one that parses system stats , the other one process leve stats
  
 import re
+import testcfg as cfg
+from lib.membase.api.rest_client import RestConnection
+from lib.remote.remote_util import RemoteMachineShellConnection
+
+def stop_atop(ip):
+    cmd = "killall atop"
+    exec_cmd(ip, cmd)
+    # Clean up load log
+    cmd = "rm -rf %s" % cfg.ATOP_LOG_FILE
+    exec_cmd(ip, cmd)
+
+def start_atop(ip):
+    # Start atop again
+    cmd = "nohup %s > /dev/null 2>&1&" % atop_proc_sig()
+    exec_cmd(ip, cmd)
+
+def atop_proc_sig():
+    return "atop -a -w %s 3" % cfg.ATOP_LOG_FILE
+
+def check_atop_proc(ip):
+    running = False
+    proc_signature = atop_proc_sig()
+    res = exec_cmd(ip, "ps aux |grep '%s' | wc -l " % proc_signature)
+
+    # one for grep, one for atop and one for bash
+    # Making sure, we always have one such atop
+    if int(res[0][0]) != 3:
+        running = True
+
+    return running
+
+def create_rest(server_ip=cfg.COUCHBASE_IP, port=cfg.COUCHBASE_PORT,
+                username=cfg.COUCHBASE_USER, password=cfg.COUCHBASE_PWD):
+    return RestConnection(create_server_obj(server_ip, port, username, password))
+
+def create_ssh_conn(server_ip = '', port=22, username = cfg.SSH_USER,
+               password = cfg.SSH_PASSWORD, os='linux'):
+    if isinstance(server_ip, unicode):
+        server_ip = str(server_ip)
+
+    serverInfo = {"ip" : server_ip,
+                  "port" : port,
+                  "ssh_username" : username,
+                  "ssh_password" : password,
+                  "ssh_key": '',
+                  "type": os
+                }
+
+    node = _dict_to_obj(serverInfo)
+    shell = RemoteMachineShellConnection(node)
+    return shell, node
+
+def exec_cmd(ip, cmd, os = "linux"):
+    shell, node = create_ssh_conn(server_ip=ip, os=os)
+    shell.use_sudo  = False
+    return shell.execute_command(cmd, node)
  
+def get_atop_sample(ip):
+    res = None
+    cmd = "atop 1 1"
+    exec_cmd(ip, cmd)    
+    # parse result based on what is expected from atop commands
+    if len(rc[0]) > 0:
+        res = rc[0][0].split()
+    print res
+    
+def resource_monitor():
+
+    rest = create_rest()
+    nodes = rest.node_statuses()
+
+    # cache sample of latest stats on all nodes
+    for node in nodes:
+
+        # check if atop running (could be new node)
+        if isinstance(node.ip, unicode):
+            node.ip = str(node.ip)
+        if check_atop_proc(node.ip):
+            restart_atop(node.ip)
+
+        # get stats from node
+        get_atop_sample(node.ip)
+
+
+    return True
+
 class AtopParser(object):
  
     @staticmethod
