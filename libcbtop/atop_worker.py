@@ -77,7 +77,7 @@ def resource_monitor(interval=30):
     nodes = rest.node_statuses()
     atop_db = Seriesly(cfg.SERIESLY_IP, 3133)
  
-    if "atop" in seriesly.list_dbs():
+    if "atop" in atop_db.list_dbs():
         atop_db = atop_db['atop']
     else:
         atop_db = create_db('atop')
