@@ -1,9 +1,5 @@
-# run atop
-# convert that to a python dictionary which can be sent back 
- 
-#two parser , one that parses system stats , the other one process leve stats
- 
 import re
+import time
 import testcfg as cfg
 from seriesly import Seriesly
 from lib.membase.api.rest_client import RestConnection
@@ -62,12 +58,17 @@ def update_node_stats(db, sample, ip):
     sample['host-ip'] = ip
     db.append(sample)
 
-def resource_monitor():
+def resource_monitor(interval=30):
 
     rest = create_rest()
     nodes = rest.node_statuses()
-
-    atop_db = Seriesly(cfg.SERIESLY_IP, 3133)['atop']
+    atop_db = Seriesly(cfg.SERIESLY_IP, 3133)
+ 
+    if "atop" in seriesly.list_dbs():
+        atop_db = atop_db['atop']
+    else:
+        atop_db = create_db('atop')
+        atop_db = atop_db['atop']
 
     while True:
         for node in nodes:
@@ -82,6 +83,8 @@ def resource_monitor():
             get_atop_sample(node.ip)
         
             update_node_stats(atop_db, sample, node.ip)
+            
+            time.sleep(interval)
 
 def get_atop_sample(ip):
 
