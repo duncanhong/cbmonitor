@@ -8,7 +8,7 @@ from metadata.visit import main as visit, VISIT_ENTRY_FUNCS, retrieve_meta
 
 import visit_cb as vc
 import paint as pt
-import
+import atop_worker as atop
 
 CTL = {"run_ok": True, "bg": True}
 
@@ -29,8 +29,8 @@ def main(server, itv=5, ctl=CTL, port=8091, path="/pools/default",
     mc_proc.daemon = True
     mc_proc.start()
     
-    atop_proc = multiprocessing.Process(target=,
-        args=())
+    atop_proc = multiprocessing.Process(target=atop.resource_monitor,
+        args=(interval=30))
 
     atop_proc.daemon = True
     atop_proc.start()
