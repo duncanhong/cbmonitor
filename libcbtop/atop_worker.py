@@ -80,7 +80,7 @@ def resource_monitor(interval=30):
     if "atop" in atop_db.list_dbs():
         atop_db = atop_db['atop']
     else:
-        atop_db = create_db('atop')
+        atop_db.create_db('atop')
         atop_db = atop_db['atop']
 
     while True:
