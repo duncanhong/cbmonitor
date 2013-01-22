@@ -96,8 +96,8 @@ def resource_monitor(interval=30):
                 restart_atop(node.ip)
 
             # get stats from node
-            get_atop_sample(node.ip)
-        
+            sample = get_atop_sample(node.ip)
+
             update_node_stats(atop_db, sample, node.ip)
             
             time.sleep(interval)
