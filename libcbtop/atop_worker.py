@@ -74,18 +74,18 @@ def update_node_stats(db, sample, ip):
     for key in sample.keys():
         if key != 'ip':
             if key.find('size') == -1:
-                val = float(re.sub(r'[^\d.]+', '', sample[key]))
+                val = int(re.sub(r'[^\d.]+', '', sample[key]))
                 sample[key] = val
             else:
                 # for memory usage, we take MB as unit
                 if sample[key][-1] == 'K':
-                    val = float(re.sub(r'[^\d.]+', '', sample[key])) / 1000
+                    val = int(float(re.sub(r'[^\d.]+', '', sample[key])) / 1000)
                     sample[key] = val
                 elif sample[key][-1] == 'G':
-                    val = float(re.sub(r'[^\d.]+', '', sample[key])) * 1000
+                    val = int (float(re.sub(r'[^\d.]+', '', sample[key])) * 1000)
                     sample[key] = val
                 else:
-                    val = float(re.sub(r'[^\d.]+', '', sample[key]))
+                    val = int(re.sub(r'[^\d.]+', '', sample[key]))
                     sample[key] = val
     db.append(sample)
 
