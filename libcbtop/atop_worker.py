@@ -81,7 +81,7 @@ def update_node_stats(db, sample, ip):
                 if sample[key][-1] == 'K':
                     val = float(re.sub(r'[^\d.]+', '', sample[key])) / 1000
                     sample[key] = val
-                if sample[key][-1] == 'G':
+                elif sample[key][-1] == 'G':
                     val = float(re.sub(r'[^\d.]+', '', sample[key])) * 1000
                     sample[key] = val
                 else:
