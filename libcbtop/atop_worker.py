@@ -82,7 +82,7 @@ def update_node_stats(db, sample, ip):
                     val = int(float(re.sub(r'[^\d.]+', '', sample[key])) / 1000)
                     sample[key] = val
                 elif sample[key][-1] == 'G':
-                    val = int (float(re.sub(r'[^\d.]+', '', sample[key])) * 1000)
+                    val = int(float(re.sub(r'[^\d.]+', '', sample[key])) * 1000)
                     sample[key] = val
                 else:
                     val = int(float(re.sub(r'[^\d.]+', '', sample[key])))
