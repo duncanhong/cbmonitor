@@ -71,6 +71,22 @@ def check_atop_proc(ip):
     return running
 
 def update_node_stats(db, sample, ip):
+    for key in sample.keys():
+        if key != 'ip':
+            if key.find('size') == -1:
+                val = float(re.sub(r'[^\d.]+', '', sample[key]))
+                sample[key] = val
+            else:
+                # for memory usage, we take MB as unit
+                if sample[key][-1] == 'K':
+                    val = float(re.sub(r'[^\d.]+', '', sample[key])) / 1000
+                    sample[key] = val
+                if sample[key][-1] == 'G':
+                    val = float(re.sub(r'[^\d.]+', '', sample[key])) * 1000
+                    sample[key] = val
+                else:
+                    val = float(re.sub(r'[^\d.]+', '', sample[key]))
+                    sample[key] = val
     db.append(sample)
 
 def resource_monitor(interval=30):
@@ -113,8 +129,8 @@ def get_atop_sample(ip):
         sample.update({"sys_cpu" : cpu[0],
                        "usr_cpu" : cpu[1]})
     if mem:
-        sample.update({"vsize" : mem[0],
-                       "rsize" : mem[1]})
+        sample.update({"vsize_beam" : mem[0],
+                       "rsize_beam" : mem[1]})
 
     if mem_mc:
         sample.update({"vsize_mc" : mem_mc[0],
