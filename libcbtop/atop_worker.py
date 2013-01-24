@@ -125,7 +125,7 @@ def get_atop_sample(ip):
     mem_column = atop_mem_column(ip)
     cpu_column = atop_cpu_column(ip)
     cpu_beam = atop_beam_cpu(ip, cpu_column)
-    cpu_mc = atop_mc_cpu(ip, cpu_colum)
+    cpu_mc = atop_mc_cpu(ip, cpu_column)
     mem = atop_mem(ip, mem_column)
     mem_mc = atop_mem_mc(ip, mem_column)
     swap = sys_swap(ip)
