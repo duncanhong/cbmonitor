@@ -177,7 +177,7 @@ def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase
     ax = fig.add_subplot(1, 1, 1)
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
-    col_labels = [stat_desc]
+    col_labels = [stats_desc]
     row_labels = [phase_desc]
     table_vals=[[value]]
     fig.table(cellText=table_vals, colWidths = [0.1]*3, rowLabels=row_labels,
