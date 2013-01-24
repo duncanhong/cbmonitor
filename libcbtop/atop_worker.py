@@ -120,14 +120,16 @@ def resource_monitor(interval=30):
 def get_atop_sample(ip):
     sample = {"ip" : ip}
     mem_column = atop_mem_column(ip)
-    cpu = atop_cpu(ip)
+    cpu_column = atop_cpu_column(ip)
+    cpu_beam = atop_beam_cpu(ip, cpu_column)
+    cpu_mc = atop_mc_cpu(ip, cpu_colum)
     mem = atop_mem(ip, mem_column)
     mem_mc = atop_mem_mc(ip, mem_column)
     swap = sys_swap(ip)
     disk = atop_dsk(ip)
     if cpu:
-        sample.update({"sys_cpu" : cpu[0],
-                       "usr_cpu" : cpu[1]})
+        sample.update({"cpu_beam" : cpu_beam[0],
+                       "cpu_mc" : cpu_mc[0]})
     if mem:
         sample.update({"vsize_beam" : mem[0],
                        "rsize_beam" : mem[1]})
@@ -157,8 +159,21 @@ def atop_mem_column(ip):
         column = res.index("VSIZE")
     return column
 
-def atop_cpu(ip):
-    cmd = "grep ^CPU | grep sys | awk '{print $4,$7}' "
+def atop_cpu_column(ip):
+    cmd = 'atop 1 1 | grep SYSCPU'
+    column = 11
+    rc = exec_cmd(ip, cmd)
+    if len(rc[0]) > 0:
+        res = rc[0][0].split()
+        column = res.index("CPU")
+    return column
+
+def atop_mc_cpu(ip, column):
+    cmd = "grep memcached | awk '{print $%d}' " % (column+1)
+    return _atop_exec(ip, cmd)
+
+def atop_beam_cpu(ip, column):
+    cmd = "grep beam.smp | awk '{print $%d}' " % (column+1)
     return _atop_exec(ip, cmd)
 
 def atop_mem(ip, column):
@@ -186,8 +201,7 @@ def atop_dsk(ip):
         wcol = count - 3
         pcol = count - 1
         cmd = "grep beam.smp | awk '{print $%d, $%d, $%d}'" % (rcol, wcol, pcol)
-    else:
-        logger.error(count[1][0])
+
     return _atop_exec(ip, cmd, flags)
 
 def _atop_exec(ip, cmd, flags = ""):
