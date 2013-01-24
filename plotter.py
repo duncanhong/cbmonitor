@@ -180,11 +180,8 @@ def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase
     col_labels = [stat_desc]
     row_labels = [phase_desc]
     table_vals=[[value]]
-    the_table = fig.table(cellText=table_vals,
-                  colWidths = [0.1]*3,
-                  rowLabels=row_labels,
-                  colLabels=col_labels,
-                  loc='center right')
+    fig.table(cellText=table_vals, colWidths = [0.1]*3, rowLabels=row_labels,
+              colLabels=col_labels, loc='center right')
 
     fig.savefig('{0}/{1}_phase_{2}_{3}_{4}.png'.format(outdir, metric, str(phase_num), phase_desc, stats_desc))
 
