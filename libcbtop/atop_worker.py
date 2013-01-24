@@ -168,7 +168,7 @@ def atop_mem_column(ip):
 
 def atop_cpu_column(ip):
     cmd = 'atop 1 1 | grep SYSCPU'
-    column = 11
+    column = 10
     rc = exec_cmd(ip, cmd)
     if len(rc[0]) > 0:
         res = rc[0][0].split()
