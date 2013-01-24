@@ -174,7 +174,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
     fig = figure()
-    ax = fig.subplot(111,frame_on=False)
+    ax = fig.add_subplot(1, 1, 1)
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
     col_labels = [stat_desc]
