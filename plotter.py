@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 
 import matplotlib
 matplotlib.use('Agg')
-from matplotlib.pyplot import figure, grid
+from matplotlib.pyplot import figure, grid, table
 from seriesly import Seriesly
 
 
@@ -175,9 +175,15 @@ def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase
     """Plot chart and save it as PNG file"""
     fig = figure()
     ax = fig.add_subplot(1, 1, 1)
+    ax.xaxis.set_visible(False)
+    ax.yaxis.set_visible(False)
+    
+    col_labels = ['{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc)]
+    row_labels = ['{0}'.format(stats_desc)]
 
-    ax.set_title('{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc))
-    ax.set_xlabel('{0} {1} value = {2}'.format(metric, stats_desc, value))
+    table_vals=[[value]]
+    table(cellText=table_vals, colWidths = [0.7]*3, rowLabels=row_labels,
+              colLabels=col_labels, loc='center')
 
     fig.savefig('{0}/{1}_phase_{2}_{3}_{4}.png'.format(outdir, metric, str(phase_num), phase_desc, stats_desc))
 
