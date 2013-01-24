@@ -26,7 +26,7 @@ STATS_TIME = ["mc-ep_warmup_time"]
 
 NS_STATS_OT = ["cpu_utilization_rate", "opsPerSec", "diskUsed", "dataUsed", "memUsed", "memoryFree"]
 
-ATOP_STATS_AVG = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
+ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
 
 ATOP_STATS_90 = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc"]
 
@@ -84,8 +84,8 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["over_time"] = query_params
 
-    if metric in ATOP_STATS_AVG:
-        query_params = { "group": 600000,
+    if metric in ATOP_STATS_OT:
+        query_params = { "group": 15000,  # 15 seconds
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
@@ -93,7 +93,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "f": ["/ip"],
                         "fv": [host_ip]
                        }
-        query["average"] = query_params
+        query["over_time"] = query_params
 
     if metric in ATOP_STATS_90:
         query_params = { "group": 300000,
