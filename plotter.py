@@ -82,7 +82,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "from": start_time,
                         "to": end_time
                        }
-        query["average"] = query_params
+        query["over_time"] = query_params
 
     if metric in ATOP_STATS_AVG:
         query_params = { "group": 600000,
