@@ -12,7 +12,7 @@ from seriesly import Seriesly
 
 
 STATS_OT = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-curr_items", "mc-curr_items_tot",  "mc-ep_overhead", 
-            "mc-ep_oom_errors", "mc-ep_bg_fetched",
+            "mc-ep_oom_errors", "mc-ep_bg_fetched", "mc-vb_active_expired",
             "mc-ep_tap_bg_fetched", "mc-ep_access_scanner_num_items", "mc-ep_tap_backfill_resident",
             "mc-vb_active_perc_mem_resident", "mc-vb_replica_perc_mem_resident", "mc-vb_active_ops_delete",
             "mc-vb_active_ops_create", "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
@@ -23,6 +23,12 @@ STATS_AVG = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-ep_bg_max_wait", "mc-e
 STATS_90 = ["mc-ep_bg_max_wait", "mc-ep_bg_wait_avg"]
 
 STATS_TIME = ["mc-ep_warmup_time"]
+
+NS_STATS_OT = ["cpu_utilization_rate", "opsPerSec", "diskUsed", "dataUsed", "memUsed", "memoryFree"]
+
+ATOP_STATS_AVG = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
+
+ATOP_STATS_90 = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc"]
 
 def get_query(metric, host_ip, bucket_name, start_time, end_time):
     """Query data using metric as key"""
@@ -68,6 +74,37 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "fv": [host_ip, bucket_name]
                        }
         query["absolute_time"] = query_params
+        
+    if metric in NS_STATS_OT:
+        query_params = { "group": 15000,
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "avg",
+                        "from": start_time,
+                        "to": end_time
+                       }
+        query["average"] = query_params
+
+    if metric in ATOP_STATS_AVG:
+        query_params = { "group": 600000,
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "avg",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": ["/ip"],
+                        "fv": [host_ip]
+                       }
+        query["average"] = query_params
+
+    if metric in ATOP_STATS_90:
+        query_params = { "group": 300000,
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "max",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": ["/ip"],
+                        "fv": [host_ip]
+                       }
+        query["90th"] = query_params
 
     return query
 
