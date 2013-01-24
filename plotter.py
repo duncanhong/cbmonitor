@@ -174,10 +174,17 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
     fig = figure()
-    ax = fig.add_subplot(1, 1, 1)
-
-    ax.set_title('{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc))
-    ax.set_xlabel('{0} {1} value = {2}'.format(metric, stats_desc, value))
+    ax = fig.subplot(111,frame_on=False)
+    ax.xaxis.set_visible(False)
+    ax.yaxis.set_visible(False)
+    col_labels = [stat_desc]
+    row_labels = [phase_desc]
+    table_vals=[[value]]
+    the_table = fig.table(cellText=table_vals,
+                  colWidths = [0.1]*3,
+                  rowLabels=row_labels,
+                  colLabels=col_labels,
+                  loc='center right')
 
     fig.savefig('{0}/{1}_phase_{2}_{3}_{4}.png'.format(outdir, metric, str(phase_num), phase_desc, stats_desc))
 
