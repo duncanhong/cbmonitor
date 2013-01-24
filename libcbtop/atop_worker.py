@@ -130,9 +130,13 @@ def get_atop_sample(ip):
     mem_mc = atop_mem_mc(ip, mem_column)
     swap = sys_swap(ip)
     disk = atop_dsk(ip)
-    if cpu:
-        sample.update({"cpu_beam" : cpu_beam[0],
-                       "cpu_mc" : cpu_mc[0]})
+
+    if cpu_beam:
+        sample.update({"cpu_beam" : cpu_beam[0]})
+
+    if cpu_mc:
+        sample.update({"cpu_mc" : cpu_mc[0]})
+
     if mem:
         sample.update({"vsize_beam" : mem[0],
                        "rsize_beam" : mem[1]})
