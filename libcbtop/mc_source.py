@@ -11,9 +11,10 @@ from lib.memcached.helper.data_helper import MemcachedClientHelper
 class MemcachedSource(Source):
 
     META_FILE = "%s/../metadata/stats.json" % os.path.dirname(__file__)
-    MC_STATS = ["", "allocator", "checkpoint", "config", "dispatcher",
-                "hash", "kvstore", "kvtimings", "memory", "prev-vbucket",
-                "tap", "tapagg", "timings", "vbucket", "vbucket-details"]
+#    MC_STATS = ["", "allocator", "checkpoint", "config", "dispatcher",
+#                "hash", "kvstore", "kvtimings", "memory", "prev-vbucket",
+#                "tap", "tapagg", "timings", "vbucket", "vbucket-details"]
+    MC_STATS = ["", "memory"]
 
     def __init__(self, server, bucket, meta_file=META_FILE, mc=None):
         self.server = server        # @class: Server
