@@ -89,7 +89,7 @@ def update_node_stats(db, sample, ip):
                     sample[key] = val
     db.append(sample)
 
-def resource_monitor(interval=30):
+def resource_monitor(interval=1):
 
     rest = create_rest()
     nodes = rest.node_statuses()
@@ -100,6 +100,9 @@ def resource_monitor(interval=30):
     else:
         atop_db.create_db('atop')
         atop_db = atop_db['atop']
+        
+    for node in nodes:
+        restart_atop(node.ip)
 
     while True:
         for node in nodes:
