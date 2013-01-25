@@ -126,10 +126,10 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             if value is not None:
                 sample_count = sample_count + 1
 
-        if sample_count > 10:
+        if sample_count > 15:
             # Substract first timestamp; conver to seconds
             timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
-        
+
             plot_metric_overtime(metric, timestamps, values, outdir, phase_num, phase_desc)
 
     if "average" in query.keys():
