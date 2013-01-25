@@ -118,15 +118,19 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
         timestamps = list()
         values = list()
+        sample_count = 0
 
         for timestamp, value in sorted(data.iteritems()):
             timestamps.append(int(timestamp))
             values.append(value)
+            if value is not None:
+                sample_count = sample_count + 1
 
-        # Substract first timestamp; conver to seconds
-        timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
+        if sample_count > 10:
+            # Substract first timestamp; conver to seconds
+            timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
         
-        plot_metric_overtime(metric, timestamps, values, outdir, phase_num, phase_desc)
+            plot_metric_overtime(metric, timestamps, values, outdir, phase_num, phase_desc)
 
     if "average" in query.keys():
         response = db.query(query["average"])
