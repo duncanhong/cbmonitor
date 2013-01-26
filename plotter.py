@@ -126,7 +126,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             if value is not None:
                 sample_count = sample_count + 1
 
-        if sample_count > 15:
+        if sample_count >= 12:
             # Substract first timestamp; conver to seconds
             timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
 
@@ -143,12 +143,12 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         values = [x for x in values if x is not None]
         sum = 0
         average_value = None
-        if len(values) > 0:
+        if len(values) >= 12:
             for x in values:
                 sum = sum + x
             average_value = sum / len(values)
 
-        plot_metric_single_value(metric, "average", average_value, outdir, phase_num, phase_desc)
+            plot_metric_single_value(metric, "average", average_value, outdir, phase_num, phase_desc)
 
     if "90th" in query.keys():
         response = db.query(query["90th"])
@@ -160,20 +160,21 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
         values = [x for x in values if x is not None]
         value = None
-        if len(values) > 0:
+        if len(values) >= 12:
             values.sort()
             pos = int(len(values) * 0.9)
             value = values[pos]
 
-        plot_metric_single_value(metric, "90th", value, outdir, phase_num, phase_desc)
-        
+            plot_metric_single_value(metric, "90th", value, outdir, phase_num, phase_desc)
+
     if "absolute_time" in query.keys():
         response = db.query(query["absolute_time"])
         data = dict((k, v[0]) for k, v in response.iteritems())
         value = None
         if len(data) > 0:
             value = data.values()[0]
-        plot_metric_single_value(metric, "absolute_time", value, outdir, phase_num, phase_desc)
+
+            plot_metric_single_value(metric, "absolute_time", value, outdir, phase_num, phase_desc)
 
 def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
