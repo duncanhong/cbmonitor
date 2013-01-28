@@ -220,24 +220,29 @@ def plot_all_phases(db_name, host_ip, bucket_name):
 
     # get system test phase info and plot phase by phase
     all_event_docs = db_event.get_all()
-    phases = {}
+    phases_info = {}
     for doc in all_event_docs.itervalues():
-        phases[doc.keys()[0]] = doc.values()[0]
+        phases_info[int(doc.keys()[0])] = doc.values()[0]
+    phases_info.keys().sort()
 
+    phases = []
+    for k, v in phases.iteritems():
+        phases.append(v)
     num_phases = len(phases)
     run_id = ''
+
     for i in range(num_phases):
         if i == 0:
-            run_id = phases[str(i)]['run_id']
+            run_id = phases[i]['run_id']
 
-        start_time = phases[str(i)].values()[0]
+        start_time = phases[i].values()[0]
         start_time = int(start_time[:10])
         end_time = 0
         if i == num_phases-1:
             end_time = str(time.time())
             end_time = int(end_time[:10])
         else:
-            end_time = phases[str(i+1)].values()[0]
+            end_time = phases[i+1].values()[0]
             end_time = int(end_time[:10])
 
         for metric in all_keys:
@@ -245,7 +250,7 @@ def plot_all_phases(db_name, host_ip, bucket_name):
             if '/' not in metric:  # views and xdcr stuff
                 query = get_query(metric, host_ip, bucket_name, start_time, end_time)
                 if len(query) > 0:
-                    plot_metric(db, metric, query, outdir, i,  phases[str(i)].keys()[0])
+                    plot_metric(db, metric, query, outdir, i,  phases[i].keys()[0])
 
 #                try:
 #                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
