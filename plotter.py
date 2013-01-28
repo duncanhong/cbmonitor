@@ -226,7 +226,7 @@ def plot_all_phases(db_name, host_ip, bucket_name):
     phases_info.keys().sort()
 
     phases = []
-    for k, v in phases.iteritems():
+    for v in phases_info.itervalues():
         phases.append(v)
     num_phases = len(phases)
     run_id = ''
