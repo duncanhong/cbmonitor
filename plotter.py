@@ -15,7 +15,7 @@ STATS_OT = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-curr_items", "mc-curr_i
             "mc-ep_oom_errors", "mc-ep_bg_fetched", "mc-vb_active_expired",
             "mc-ep_tap_bg_fetched", "mc-ep_access_scanner_num_items", "mc-ep_tap_backfill_resident",
             "mc-vb_active_perc_mem_resident", "mc-vb_replica_perc_mem_resident", "mc-vb_active_ops_delete",
-            "mc-vb_active_ops_create", "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
+            "mc-vb_active_ops_create", "mc-vb_active_ops_update", "mc-vb_replica_queue_size", "mc-ep_diskqueue_drain"]
 
 STATS_AVG = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-ep_bg_max_wait", "mc-ep_bg_wait_avg", "mc-vb_active_ops_delete",
              "mc-vb_active_ops_create", "mc-vb_active_ops_update", "mc-vb_replica_queue_size"]
