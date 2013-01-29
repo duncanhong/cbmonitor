@@ -43,7 +43,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["over_time"] = query_params
     if metric in STATS_AVG:
-        query_params = { "group": 600000,
+        query_params = { "group": 300000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
                         "from": start_time,
