@@ -24,7 +24,7 @@ STATS_90 = ["mc-ep_bg_max_wait", "mc-ep_bg_wait_avg"]
 
 STATS_TIME = ["mc-ep_warmup_time"]
 
-NS_STATS_OT = ["opsPerSec", "diskUsed", "dataUsed", "memUsed", "memoryFree"]
+NS_STATS_OT = ["cpu_utilization_rate", "opsPerSec", "diskUsed", "dataUsed", "memUsed", "memoryFree"]
 
 ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
 
