@@ -228,12 +228,11 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
                 temp_list.append(None)
 
         table_values.append(temp_list)
-        col_lables.append(k)
+        col_labels.append(k)
 
     for i in range(num_phases):
         row_labels.append(i)
-#    col_labels = ['{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc)]
-#    row_labels = ['{0}'.format(stats_desc)]
+
     table(cellText=table_vals, colWidths = [0.1]*3, rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
