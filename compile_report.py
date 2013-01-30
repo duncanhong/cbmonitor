@@ -35,7 +35,7 @@ for host_ip in host_ips:
         filenames = []
         for infile in glob.glob(os.path.join(path, '*.png')):
 	    filenames.append(infile)
-        w = 500
+        w = 400
         parts = []
         doc = SimpleDocTemplate("report_{0}_{1}_{2}_{3}.pdf".format(db_name, host_ip, bucket_name, run_id), pagesize=letter)
         filenames.sort()
@@ -43,5 +43,9 @@ for host_ip in host_ips:
 	    img = utils.ImageReader(i)
 	    iw, ih = img.getSize()
 	    aspect = ih / float(iw)
+	    if i.find("zz") >= 0:
+	    	w = 400
+	    else:
+	    	w = 600
 	    parts.append(Image(i, width=w, height=w * aspect))
         doc.build(parts)
