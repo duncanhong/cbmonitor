@@ -216,6 +216,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
         ax = fig.add_subplot(1, 1, 1)
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
+        ax.set_title('{0}_Value'.format(stats_desc))
 
         table_vals = []
         col_labels = []
@@ -234,7 +235,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
         for i in range(num_phases):
             col_labels.append(i)
 
-        table(cellText=table_vals, colWidths = [0.1]*len(col_labels), rowLabels=row_labels,
+        table(cellText=table_vals, colWidths = [0.3]*len(col_labels), rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
         fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
