@@ -35,7 +35,7 @@ for host_ip in host_ips:
         filenames = []
         for infile in glob.glob(os.path.join(path, '*.png')):
 	    filenames.append(infile)
-        w = 400
+        w = 500
         parts = []
         doc = SimpleDocTemplate("report_{0}_{1}_{2}_{3}.pdf".format(db_name, host_ip, bucket_name, run_id), pagesize=letter)
         filenames.sort()
