@@ -211,32 +211,33 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
     elif stats_desc == "absolute_time":
         matrix = AVG_TABLE
 
-    fig = figure()
-    ax = fig.add_subplot(1, 1, 1)
-    ax.xaxis.set_visible(False)
-    ax.yaxis.set_visible(False)
+    if len(matrix) > 0:
+        fig = figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
 
-    table_vals = []
-    col_labels = []
-    row_labels = []
-    for k in matrix.iterkeys():
-        temp_list = []
+        table_vals = []
+        col_labels = []
+        row_labels = []
+        for k in matrix.iterkeys():
+            temp_list = []
+            for i in range(num_phases):
+                if matrix[k][i] is not None:
+                    temp_list.append(matrix[k][i])
+                else:
+                    temp_list.append(None)
+
+            table_vals.append(temp_list)
+            row_labels.append(k)
+
         for i in range(num_phases):
-            if matrix[k][i] is not None:
-                temp_list.append(matrix[k][i])
-            else:
-                temp_list.append(None)
+            col_labels.append(i)
 
-        table_vals.append(temp_list)
-        col_labels.append(k)
-
-    for i in range(num_phases):
-        row_labels.append(i)
-
-    table(cellText=table_vals, colWidths = [0.1]*3, rowLabels=row_labels,
+        table(cellText=table_vals, colWidths = [0.1]*len(col_labels), rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
-    fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
+        fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
 
 def plot_metric_overtime(metric, keys, values, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
