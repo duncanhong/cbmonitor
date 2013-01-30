@@ -9,6 +9,7 @@ from metadata.visit import main as visit, VISIT_ENTRY_FUNCS, retrieve_meta
 import visit_cb as vc
 import paint as pt
 import atop_worker as atop
+import testcfg as cfg
 
 CTL = {"run_ok": True, "bg": True}
 
@@ -29,11 +30,10 @@ def main(server, itv=5, ctl=CTL, port=8091, path="/pools/default",
     mc_proc.daemon = True
     mc_proc.start()
     
-    atop_proc = multiprocessing.Process(target=atop.resource_monitor,
-        args=())
-
-    atop_proc.daemon = True
-    atop_proc.start()
+    if cfg.SSH_USER != "":
+        atop_proc = multiprocessing.Process(target=atop.resource_monitor, args=())
+        atop_proc.daemon = True
+        atop_proc.start()
 
     visit_entry_func = VISIT_ENTRY_FUNCS.copy()
     visit_entry_func["collect_mc_stats"] = vc.collect_mc_stats
