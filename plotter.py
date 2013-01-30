@@ -30,7 +30,7 @@ ATOP_STATS_90 = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc"]
 
 AVG_TABLE = {}
 
-90th_TABLE = {}
+Nth_TABLE = {}
 
 TIME_TABLE = {}
 
@@ -190,10 +190,10 @@ def store_metric_single_value(metric, stats_desc, value, phase_num):
             AVG_TABLE[metric].update({phase_num: value})
     elif stats_desc == "90th":
         if metric in AVG_TABLE.keys():
-            90th_TABLE[metric].update({phase_num: value})
+            Nth_TABLE[metric].update({phase_num: value})
         else:
-            90th_TABLE[metric] = {}
-            90th_TABLE[metric].update({phase_num: value})
+            Nth_TABLE[metric] = {}
+            Nth_TABLE[metric].update({phase_num: value})
     elif stats_desc == "absolute_time":
         if metric in AVG_TABLE.keys():
             TIME_TABLE[metric].update({phase_num: value})
@@ -207,7 +207,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
     if stats_desc == "average":
         matrix = AVG_TABLE
     elif stats_desc == "90th":
-        matrix = 90th_TABLE
+        matrix = Nth_TABLE
     elif stats_desc == "absolute_time":
         matrix = AVG_TABLE
 
