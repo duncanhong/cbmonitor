@@ -216,7 +216,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
 
-    table_values = []
+    table_vals = []
     col_labels = []
     row_labels = []
     for k in matrix.iterkeys():
@@ -227,7 +227,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
             else:
                 temp_list.append(None)
 
-        table_values.append(temp_list)
+        table_vals.append(temp_list)
         col_labels.append(k)
 
     for i in range(num_phases):
