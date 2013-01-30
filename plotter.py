@@ -178,7 +178,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         if len(data) > 0:
             value = data.values()[0]
 
-            plot_metric_single_value(metric, "absolute_time", value, phase_num)
+            store_metric_single_value(metric, "absolute_time", value, phase_num)
 
 def store_metric_single_value(metric, stats_desc, value, phase_num):
     "store all the single value to one table"
