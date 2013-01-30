@@ -44,8 +44,8 @@ for host_ip in host_ips:
 	    iw, ih = img.getSize()
 	    aspect = ih / float(iw)
 	    if i.find("zz") >= 0:
-	    	w = 400
+	    	w = 700
 	    else:
-	    	w = 800
+	    	w = 400
 	    parts.append(Image(i, width=w, height=w * aspect))
         doc.build(parts)
