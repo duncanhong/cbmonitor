@@ -46,6 +46,6 @@ for host_ip in host_ips:
 	    if i.find("zz") >= 0:
 	    	w = 400
 	    else:
-	    	w = 600
+	    	w = 800
 	    parts.append(Image(i, width=w, height=w * aspect))
         doc.build(parts)
