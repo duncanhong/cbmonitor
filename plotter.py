@@ -209,7 +209,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
     elif stats_desc == "90th":
         matrix = Nth_TABLE
     elif stats_desc == "absolute_time":
-        matrix = AVG_TABLE
+        matrix = TIME_TABLE
 
     if len(matrix) > 0:
         fig = figure()
@@ -233,9 +233,9 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
             row_labels.append(k)
 
         for i in range(num_phases):
-            col_labels.append(i)
+            col_labels.append("P %d" % (i))
 
-        table(cellText=table_vals, colWidths = [0.3]*len(col_labels), rowLabels=row_labels,
+        table(cellText=table_vals, colWidths = [0.2]*len(col_labels), rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
         fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
