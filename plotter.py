@@ -28,6 +28,12 @@ ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk"
 
 ATOP_STATS_90 = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc"]
 
+AVG_TABLE = {}
+
+90th_TABLE = {}
+
+TIME_TABLE = {}
+
 def get_query(metric, host_ip, bucket_name, start_time, end_time):
     """Query data using metric as key"""
     # get query response
@@ -146,7 +152,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
                 sum = sum + x
             average_value = sum / len(values)
 
-            plot_metric_single_value(metric, "average", average_value, outdir, phase_num, phase_desc)
+            store_metric_single_value(metric, "average", average_value, phase_num)
 
     if "90th" in query.keys():
         response = db.query(query["90th"])
@@ -163,7 +169,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             pos = int(len(values) * 0.9)
             value = values[pos]
 
-            plot_metric_single_value(metric, "90th", value, outdir, phase_num, phase_desc)
+            store_metric_single_value(metric, "90th", value, phase_num)
 
     if "absolute_time" in query.keys():
         response = db.query(query["absolute_time"])
@@ -172,23 +178,66 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         if len(data) > 0:
             value = data.values()[0]
 
-            plot_metric_single_value(metric, "absolute_time", value, outdir, phase_num, phase_desc)
+            plot_metric_single_value(metric, "absolute_time", value, phase_num)
 
-def plot_metric_single_value(metric, stats_desc, value, outdir, phase_num, phase_desc):
+def store_metric_single_value(metric, stats_desc, value, phase_num):
+    "store all the single value to one table"
+    if stats_desc == "average":
+        if metric in AVG_TABLE.keys():
+            AVG_TABLE[metric].update({phase_num: value})
+        else:
+            AVG_TABLE[metric] = {}
+            AVG_TABLE[metric].update({phase_num: value})
+    elif stats_desc == "90th":
+        if metric in AVG_TABLE.keys():
+            90th_TABLE[metric].update({phase_num: value})
+        else:
+            90th_TABLE[metric] = {}
+            90th_TABLE[metric].update({phase_num: value})
+    elif stats_desc == "absolute_time":
+        if metric in AVG_TABLE.keys():
+            TIME_TABLE[metric].update({phase_num: value})
+        else:
+            TIME_TABLE[metric] = {}
+            TIME_TABLE[metric].update({phase_num: value})
+
+def plot_metric_single_value(stats_desc, outdir, num_phases):
     """Plot chart and save it as PNG file"""
+    matrix = None
+    if stats_desc == "average":
+        matrix = AVG_TABLE
+    elif stats_desc == "90th":
+        matrix = 90th_TABLE
+    elif stats_desc == "absolute_time":
+        matrix = AVG_TABLE
+
     fig = figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
-    
-    col_labels = ['{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc)]
-    row_labels = ['{0}'.format(stats_desc)]
 
-    table_vals=[[value]]
-    table(cellText=table_vals, colWidths = [0.7]*3, rowLabels=row_labels,
+    table_values = []
+    col_labels = []
+    row_labels = []
+    for k in matrix.iterkeys():
+        temp_list = []
+        for i in range(num_phases):
+            if matrix[k][i] is not None:
+                temp_list.append(matrix[k][i])
+            else:
+                temp_list.append(None)
+
+        table_values.append(temp_list)
+        col_lables.append(k)
+
+    for i in range(num_phases):
+        row_labels.append(i)
+#    col_labels = ['{0}_phase_{1}_{2}'.format(metric, str(phase_num), phase_desc)]
+#    row_labels = ['{0}'.format(stats_desc)]
+    table(cellText=table_vals, colWidths = [0.1]*3, rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
-    fig.savefig('{0}/{1}_phase_{2}_{3}_{4}.png'.format(outdir, metric, str(phase_num), phase_desc, stats_desc))
+    fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
 
 def plot_metric_overtime(metric, keys, values, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
@@ -254,5 +303,9 @@ def plot_all_phases(db_name, host_ip, bucket_name):
 #                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
 #                    print "PDF report was successfully generated!"
 #                except OSError:
+    plot_metric_single_value("average", outdir, num_phases)
+    plot_metric_single_value("90th", outdir, num_phases)
+    plot_metric_single_value("absolute_time", outdir, num_phases)
+
     print "All images saved to: {0}".format(outdir)
     return outdir, run_id
