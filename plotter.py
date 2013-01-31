@@ -235,7 +235,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
         invert_table = []
         for i in range(len(table_vals[0])):
             temp_list = []
-            for j in (len(table_vals)):
+            for j in range(len(table_vals)):
                 temp_list.append(table_vals[j][i])
             invert_table.append(temp_list)
 
