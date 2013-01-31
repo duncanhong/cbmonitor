@@ -147,7 +147,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         values = [x for x in values if x is not None]
         sum = 0
         average_value = None
-        if len(values) >= 12:
+        if len(values) >= 1:
             for x in values:
                 sum = sum + x
             average_value = sum / len(values)
@@ -164,7 +164,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
         values = [x for x in values if x is not None]
         value = None
-        if len(values) >= 12:
+        if len(values) >= 1:
             values.sort()
             pos = int(len(values) * 0.9)
             value = values[pos]
@@ -230,12 +230,19 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
                     temp_list.append(None)
 
             table_vals.append(temp_list)
-            row_labels.append(k)
+            col_labels.append(k)
+
+        invert_table = []
+        for i in len(table_vals[0]):
+            temp_list = []
+            for j in len(table_vals):
+                temp_list.append(table_vals[j][i])
+            invert_table.append(temp_list)
 
         for i in range(num_phases):
-            col_labels.append("P %d" % (i))
+            row_labels.append("P %d" % (i))
 
-        table(cellText=table_vals, colWidths = [0.2]*len(col_labels), rowLabels=row_labels,
+        table(cellText=invert_table, colWidths = [0.2]*len(col_labels), rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
         fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
