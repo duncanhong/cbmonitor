@@ -189,13 +189,13 @@ def store_metric_single_value(metric, stats_desc, value, phase_num):
             AVG_TABLE[metric] = {}
             AVG_TABLE[metric].update({phase_num: value})
     elif stats_desc == "90th":
-        if metric in AVG_TABLE.keys():
+        if metric in Nth_TABLE.keys():
             Nth_TABLE[metric].update({phase_num: value})
         else:
             Nth_TABLE[metric] = {}
             Nth_TABLE[metric].update({phase_num: value})
     elif stats_desc == "absolute_time":
-        if metric in AVG_TABLE.keys():
+        if metric in TIME_TABLE.keys():
             TIME_TABLE[metric].update({phase_num: value})
         else:
             TIME_TABLE[metric] = {}
@@ -224,7 +224,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
         for k in matrix.iterkeys():
             temp_list = []
             for i in range(num_phases):
-                if matrix[k][i] is not None:
+                if  i in matrix[k].keys():
                     temp_list.append(matrix[k][i])
                 else:
                     temp_list.append(None)
