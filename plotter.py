@@ -14,7 +14,7 @@ from seriesly import Seriesly
 STATS_OT = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-curr_items", "mc-curr_items_tot",  "mc-ep_overhead", 
             "mc-ep_oom_errors", "mc-ep_bg_fetched", "mc-vb_active_expired",
             "mc-ep_tap_bg_fetched", "mc-ep_access_scanner_num_items", "mc-ep_tap_backfill_resident",
-            "mc-vb_active_perc_mem_resident", "mc-vb_replica_perc_mem_resident", "mc-vb_replica_queue_size", "mc-ep_diskqueue_drain"]
+            "mc-vb_active_perc_mem_resident", "mc-vb_replica_perc_mem_resident", "mc-vb_replica_queue_size"]
 
 STATS_AVG = ["mc-ep_queue_size", "mc-ep_commit_time", "mc-ep_bg_max_wait", "mc-ep_bg_wait_avg", "mc-vb_replica_queue_size"]
 
@@ -22,7 +22,7 @@ STATS_90 = ["mc-ep_bg_max_wait", "mc-ep_bg_wait_avg"]
 
 STATS_TIME = ["mc-ep_warmup_time"]
 
-NS_STATS_OT = ["cpu_utilization_rate", "opsPerSec", "diskUsed", "dataUsed", "memUsed"]
+NS_STATS_OT = ["cpu_utilization_rate", "opsPerSec", "diskUsed", "dataUsed"]
 
 ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
 
@@ -245,7 +245,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
         table(cellText=invert_table, colWidths = [0.2]*len(col_labels), rowLabels=row_labels,
               colLabels=col_labels, loc='center')
 
-        fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc))
+        fig.savefig('{0}/zz-{1}_value.png'.format(outdir, stats_desc), dpi=300)
 
 def plot_metric_overtime(metric, keys, values, outdir, phase_num, phase_desc):
     """Plot chart and save it as PNG file"""
