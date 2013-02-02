@@ -221,7 +221,7 @@
  "stats": {
   "uri": "/pools/default/stats",
   "-uri": {
-   "follow": true
+   "follow": false
   }
  },
  "stopRebalanceIsSafe": false,
