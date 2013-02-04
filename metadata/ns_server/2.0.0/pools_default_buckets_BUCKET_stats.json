@@ -9862,10 +9862,25 @@
             787
          ]
       },
+      "-samples": {
+          "visit": "fast"
+      },
       "samplesCount":60,
+      "-samplesCount": {
+          "visit": "strip"
+      },
       "isPersistent":true,
+      "-isPersistent": {
+          "visit": "strip"
+      },
       "lastTStamp":1359777339019,
-      "interval":1000
+      "-lastTStamp": {
+          "visit": "strip"
+      },
+      "interval":1000,
+      "-interval": {
+          "visit": "strip"
+      }
    },
    "hot_keys":[
       {
@@ -9908,5 +9923,8 @@
          "name":"5B6FF588DDA5599DA93FB87D",
          "ops":1.0
       }
-   ]
+   ],
+   "-hot_keys": {
+       "visit": "strip"
+   }
 }
