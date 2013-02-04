@@ -140,7 +140,10 @@
    "-nodeStatsListURI": {
     "follow": true
    },
-   "uri": "/pools/default/buckets/default/stats"
+   "uri": "/pools/default/buckets/default/stats",
+   "-uri": {
+    "follow": true
+   }
   },
   "streamingUri": "/pools/default/bucketsStreaming/default",
   "uri": "/pools/default/buckets/default",
