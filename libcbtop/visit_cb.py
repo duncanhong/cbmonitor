@@ -13,7 +13,7 @@ from tabula.section import Section
 from seriesly import Seriesly
 import seriesly.exceptions
 
-from metadata.visit import retrieve_meta
+from metadata.visit import retrieve_meta, visit_entry
 
 from paint import TABULA_CONV_FUNCS, TABULA_DECO_FUNCS
 from server import Server
@@ -189,6 +189,22 @@ def retrieve_data(context, path):
         return json.loads(content)
 
     return retrieve_meta(context, path)
+
+def visit_list_single_value(root, parents, data, meta, coll, level=0,
+               up_key=None, up_data=None, up_coll=None):
+    """Invoked when data is a list."""
+    if not isinstance(data, list):
+        log(data, " is not a list")
+        return
+    next_level = level + 1
+    if len(meta) <= 0:
+        log("warning: missing list metadata entry at: %s" % (parents))
+        return
+    meta_val = meta[0] # Use only the first item for metadata.
+    val = data[0]
+    idx = up_key
+    visit_entry(root, parents, data, meta, coll,
+                idx, val, meta_val, None, level=next_level)
 
 def collect_mc_stats(root, parents, data, meta, coll,
                      key, val, meta_val, meta_inf, level=0):
