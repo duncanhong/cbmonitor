@@ -38,7 +38,7 @@ def main(server, itv=5, ctl=CTL, port=8091, path="/pools/default",
     visit_entry_func = VISIT_ENTRY_FUNCS.copy()
     visit_entry_func["collect_mc_stats"] = vc.collect_mc_stats
     visit_collection_func = VISIT_COLLECTION_FUNCS.copy()
-    visit_collection_func["<type 'list'>"] = vc.visit_list   
+    visit_collection_func["<type 'list'>"] = vc.visit_list_single_value   
 
     while ctl["run_ok"]:
 
@@ -48,6 +48,7 @@ def main(server, itv=5, ctl=CTL, port=8091, path="/pools/default",
                  "slow": vc.store_slow},
                 {"url_before": vc.url_before,
                  "url_after": vc.url_after},
+            collection_funcs=visit_collection_func,
             retrieve_funcs={"retrieve_data": vc.retrieve_data,
                             "retrieve_meta": retrieve_meta},
             entry_funcs=visit_entry_func, ctl=ctl)
