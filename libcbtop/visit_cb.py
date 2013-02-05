@@ -194,11 +194,11 @@ def visit_list_single_value(root, parents, data, meta, coll, level=0,
                up_key=None, up_data=None, up_coll=None):
     """Invoked when data is a list."""
     if not isinstance(data, list):
-        log(data, " is not a list")
+        logging.error(data, " is not a list")
         return
     next_level = level + 1
     if len(meta) <= 0:
-        log("warning: missing list metadata entry at: %s" % (parents))
+        logging.error("warning: missing list metadata entry at: %s" % (parents))
         return
     meta_val = meta[0] # Use only the first item for metadata.
     val = data[0]
