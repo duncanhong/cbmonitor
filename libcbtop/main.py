@@ -4,7 +4,7 @@ import logging
 import time
 import multiprocessing
 
-from metadata.visit import main as visit, VISIT_ENTRY_FUNCS, retrieve_meta
+from metadata.visit import main as visit, VISIT_ENTRY_FUNCS, retrieve_meta, VISIT_COLLECTION_FUNCS
 
 import visit_cb as vc
 import paint as pt
@@ -37,6 +37,8 @@ def main(server, itv=5, ctl=CTL, port=8091, path="/pools/default",
 
     visit_entry_func = VISIT_ENTRY_FUNCS.copy()
     visit_entry_func["collect_mc_stats"] = vc.collect_mc_stats
+    visit_collection_func = VISIT_COLLECTION_FUNCS.copy()
+    visit_collection_func["<type 'list'>"] = vc.visit_list   
 
     while ctl["run_ok"]:
 
