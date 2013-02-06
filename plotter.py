@@ -25,7 +25,7 @@ STATS_TIME = ["mc-ep_warmup_time"]
 NS_STATS_OT = ["cpu_utilization_rate", "opsPerSec", "replication_docs_rep_queue",
                "xdc_ops", "ep_cache_miss_rate", "replication_changes_left", "replication_docs_checked",
                "ep_num_ops_get_meta", "ep_num_ops_del_meta", "ep_num_ops_set_meta", "replication_data_replicated", 
-               "replication_size_rep_queue", "vb_active_queue_drain", "couch_views_disk_size", "couch_docs_disk_size"]
+               "replication_size_rep_queue", "vb_active_queue_drain", "couch_views_actual_disk_size", "couch_docs_actual_disk_size"]
 
 ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
 
