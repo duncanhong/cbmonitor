@@ -178,7 +178,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         response = db.query(query["absolute_time"])
         data = {}
         if isinstance(response, dict):
-            for k, v in responce.iteritems():
+            for k, v in response.iteritems():
                 if isinstance(v, list):
                     data[k] = v[0]
         value = None
