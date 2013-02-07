@@ -176,11 +176,13 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
     if "absolute_time" in query.keys():
         response = db.query(query["absolute_time"])
-        data = None
-        if response is dict and response.values()[0] is list:
-            data = dict((k, v[0]) for k, v in response.iteritems())
+        data = {}
+        if isinstance(response, dict):
+            for k, v in responce.iteritems():
+                if isinstance(v, list):
+                    data[k] = v[0]
         value = None
-        if  data is not None:
+        if  len(data) > 0 :
             value = data.values()[0]
 
             store_metric_single_value(metric, "absolute_time", value, phase_num)
