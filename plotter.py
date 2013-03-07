@@ -31,6 +31,8 @@ ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk"
 
 ATOP_STATS_90 = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc"]
 
+VIEW_STATS_OT = ["query_latency"]
+
 AVG_TABLE = {}
 
 Nth_TABLE = {}
@@ -112,6 +114,15 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "fv": [host_ip]
                        }
         query["90th"] = query_params
+
+    if metric in VIEW_STATS_OT:
+        query_params = { "group": 15000,  # 15 seconds
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "avg",
+                        "from": start_time,
+                        "to": end_time,
+                       }
+        query["over_time"] = query_params
 
     return query
 
