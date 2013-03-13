@@ -37,6 +37,12 @@ VIEW_STATS_AVG = ["query_latency"]
 
 VIEW_STATS_90 = ["query_latency"]
 
+KV_STATS_OT = ["set_latency", "get_latency", "delete_latency"]
+
+KV_STATS_AVG = ["set_latency", "get_latency", "delete_latency"]
+
+KV_STATS_90 = ["set_latency", "get_latency", "delete_latency"]
+
 AVG_TABLE = {}
 
 Nth_TABLE = {}
@@ -119,7 +125,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["90th"] = query_params
 
-    if metric in VIEW_STATS_OT:
+    if metric in VIEW_STATS_OT or metric in KV_STATS_OT:
         query_params = { "group": 15000,  # 15 seconds
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
@@ -128,7 +134,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["over_time"] = query_params
 
-    if metric in VIEW_STATS_AVG:
+    if metric in VIEW_STATS_AVG or metric in KV_STATS_AVG:
         query_params = { "group": 300000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "avg",
@@ -137,7 +143,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["average"] = query_params
 
-    if metric in VIEWS_STATS_90:
+    if metric in VIEWS_STATS_90 or metric in KV_STATS_90:
         query_params = { "group": 300000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
