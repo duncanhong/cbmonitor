@@ -143,7 +143,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                        }
         query["average"] = query_params
 
-    if metric in VIEWS_STATS_90 or metric in KV_STATS_90:
+    if metric in VIEW_STATS_90 or metric in KV_STATS_90:
         query_params = { "group": 300000,
                         "ptr": '/{0}'.format(metric),
                         "reducer": "max",
