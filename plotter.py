@@ -169,11 +169,12 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
         for timestamp, value in sorted(data.iteritems()):
             timestamps.append(int(timestamp))
+            values.append(value)
             if value is not None:
+                sample_count = sample_count + 1
                 sum = sum + value
-                values.append(value)
 
-        if len(values) >= 12 and sum > 0:
+        if sample_count >= 12 and sum > 0:
             # Substract first timestamp; conver to seconds
             timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
 
