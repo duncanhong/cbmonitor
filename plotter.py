@@ -165,14 +165,15 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
         timestamps = list()
         values = list()
         sample_count = 0
+        sum = 0
 
         for timestamp, value in sorted(data.iteritems()):
             timestamps.append(int(timestamp))
-            values.append(value)
             if value is not None:
-                sample_count = sample_count + 1
+                sum = sum + value
+                values.append(value)
 
-        if sample_count >= 12:
+        if len(values) >= 12 and sum > 0:
             # Substract first timestamp; conver to seconds
             timestamps = [(key - timestamps[0]) / 1000 for key in timestamps]
 
@@ -194,7 +195,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
                 sum = sum + x
             average_value = sum / len(values)
 
-            store_metric_single_value(metric, "average", average_value, phase_num)
+            store_metric_single_value(metric, "average", "{0:.3f}".format(average_value), phase_num)
 
     if "90th" in query.keys():
         response = db.query(query["90th"])
@@ -211,7 +212,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             pos = int(len(values) * 0.9)
             value = values[pos]
 
-            store_metric_single_value(metric, "90th", value, phase_num)
+            store_metric_single_value(metric, "90th", "{0:.3f}".format(value), phase_num)
 
     if "absolute_time" in query.keys():
         response = db.query(query["absolute_time"])
