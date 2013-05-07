@@ -254,7 +254,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
         row_labels = []
         for k in matrix.iterkeys():
             temp_list = []
-            for i in range(num_phases):
+            for i in range(num_phases)[1:]:
                 if  i in matrix[k].keys():
                     temp_list.append(matrix[k][i])
                 else:
@@ -270,7 +270,7 @@ def plot_metric_single_value(stats_desc, outdir, num_phases):
                 temp_list.append(table_vals[j][i])
             invert_table.append(temp_list)
 
-        for i in range(num_phases):
+        for i in range(num_phases)[1:]:
             row_labels.append("P %d" % (i))
 
         table(cellText=invert_table, colWidths = [0.2]*len(col_labels), rowLabels=row_labels,
