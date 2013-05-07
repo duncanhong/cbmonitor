@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 from optparse import OptionParser
-import subprocess
-import sys
 import time
 from tempfile import mkdtemp
 
@@ -43,11 +41,7 @@ KV_STATS_AVG = ["set_latency", "get_latency", "delete_latency"]
 
 KV_STATS_90 = ["set_latency", "get_latency", "delete_latency"]
 
-AVG_TABLE = {}
-
-Nth_TABLE = {}
-
-TIME_TABLE = {}
+TABLE = {"average": {}, "90th": {}, "absolute_time": {}, "latency_average": {}, "latency_90th": {}}
 
 def get_query(metric, host_ip, bucket_name, start_time, end_time):
     """Query data using metric as key"""
@@ -141,7 +135,7 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "from": start_time,
                         "to": end_time
                        }
-        query["average"] = query_params
+        query["latency_average"] = query_params
 
     if metric in VIEW_STATS_90 or metric in KV_STATS_90:
         query_params = { "group": 300000,
@@ -150,12 +144,48 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "from": start_time,
                         "to": end_time
                        }
-        query["90th"] = query_params
+        query["latency_90th"] = query_params
 
     return query
 
-def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
+def plot_avg(query_key, db, metric, query, phase_num):
+    if query_key in query.keys():
+        response = db.query(query[query_key])
+        data = dict((k, v[0]) for k, v in response.iteritems())
+        values = list()
 
+        for timestamp, value in data.iteritems():
+            values.append(value)
+
+        values = [x for x in values if x is not None]
+        sum = 0
+        average_value = None
+        if len(values) >= 1:
+            for x in values:
+                sum = sum + x
+            average_value = sum / len(values)
+
+            store_metric_single_value(metric, query_key, "{0:.3f}".format(average_value), phase_num)
+
+def plot_90th(query_key, db, metric, query, phase_num):
+    if query_key in query.keys():
+        response = db.query(query[query_key])
+        data = dict((k, v[0]) for k, v in response.iteritems())
+        values = list()
+
+        for timestamp, value in data.iteritems():
+            values.append(value)
+
+        values = [x for x in values if x is not None]
+        value = None
+        if len(values) >= 1:
+            values.sort()
+            pos = int(len(values) * 0.9)
+            value = values[pos]
+
+            store_metric_single_value(metric, query_key, "{0:.3f}".format(value), phase_num)
+
+def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
     if "over_time" in query.keys():
         response = db.query(query["over_time"])
 
@@ -180,40 +210,10 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
             plot_metric_overtime(metric, timestamps, values, outdir, phase_num, phase_desc)
 
-    if "average" in query.keys():
-        response = db.query(query["average"])
-        data = dict((k, v[0]) for k, v in response.iteritems())
-        values = list()
-
-        for timestamp, value in data.iteritems():
-            values.append(value)
-
-        values = [x for x in values if x is not None]
-        sum = 0
-        average_value = None
-        if len(values) >= 1:
-            for x in values:
-                sum = sum + x
-            average_value = sum / len(values)
-
-            store_metric_single_value(metric, "average", "{0:.3f}".format(average_value), phase_num)
-
-    if "90th" in query.keys():
-        response = db.query(query["90th"])
-        data = dict((k, v[0]) for k, v in response.iteritems())
-        values = list()
-
-        for timestamp, value in data.iteritems():
-            values.append(value)
-
-        values = [x for x in values if x is not None]
-        value = None
-        if len(values) >= 1:
-            values.sort()
-            pos = int(len(values) * 0.9)
-            value = values[pos]
-
-            store_metric_single_value(metric, "90th", "{0:.3f}".format(value), phase_num)
+    plot_90th("90th", db, metric, query, phase_num)
+    plot_90th("latency_90th", db, metric, query, phase_num)
+    plot_avg("average", db, metric, query, phase_num)
+    plot_avg("latency_average", db, metric, query, phase_num)
 
     if "absolute_time" in query.keys():
         response = db.query(query["absolute_time"])
@@ -229,42 +229,24 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             store_metric_single_value(metric, "absolute_time", value, phase_num)
 
 def store_metric_single_value(metric, stats_desc, value, phase_num):
-    "store all the single value to one table"
-    if stats_desc == "average":
-        if metric in AVG_TABLE.keys():
-            AVG_TABLE[metric].update({phase_num: value})
+    """store all the single value to one table"""
+    if stats_desc in TABLE.keys():
+        if metric in TABLE[stats_desc].keys():
+            TABLE[stats_desc][metric].update({phase_num: value})
         else:
-            AVG_TABLE[metric] = {}
-            AVG_TABLE[metric].update({phase_num: value})
-    elif stats_desc == "90th":
-        if metric in Nth_TABLE.keys():
-            Nth_TABLE[metric].update({phase_num: value})
-        else:
-            Nth_TABLE[metric] = {}
-            Nth_TABLE[metric].update({phase_num: value})
-    elif stats_desc == "absolute_time":
-        if metric in TIME_TABLE.keys():
-            TIME_TABLE[metric].update({phase_num: value})
-        else:
-            TIME_TABLE[metric] = {}
-            TIME_TABLE[metric].update({phase_num: value})
+            TABLE[stats_desc][metric] = {}
+            TABLE[stats_desc][metric].update({phase_num: value})
 
 def plot_metric_single_value(stats_desc, outdir, num_phases):
     """Plot chart and save it as PNG file"""
-    matrix = None
-    if stats_desc == "average":
-        matrix = AVG_TABLE
-    elif stats_desc == "90th":
-        matrix = Nth_TABLE
-    elif stats_desc == "absolute_time":
-        matrix = TIME_TABLE
+    matrix = TABLE[stats_desc]
 
     if len(matrix) > 0:
         fig = figure()
         ax = fig.add_subplot(1, 1, 1)
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
-        ax.set_title('{0}_Value'.format(stats_desc))
+        ax.set_title('{0}_value'.format(stats_desc))
 
         table_vals = []
         col_labels = []
@@ -355,13 +337,8 @@ def plot_all_phases(db_name, host_ip, bucket_name):
                 if len(query) > 0:
                     plot_metric(db, metric, query, outdir, i,  phases[i].keys()[0])
 
-#                try:
-#                    subprocess.call(['convert', '{0}/*'.format(outdir), 'report.pdf'])
-#                    print "PDF report was successfully generated!"
-#                except OSError:
-    plot_metric_single_value("average", outdir, num_phases)
-    plot_metric_single_value("90th", outdir, num_phases)
-    plot_metric_single_value("absolute_time", outdir, num_phases)
+    for key in TABLE.keys():
+        plot_metric_single_value(key, outdir, num_phases)
 
     print "All images saved to: {0}".format(outdir)
     return outdir, run_id
