@@ -231,13 +231,12 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
 def store_metric_single_value(metric, stats_desc, value, phase_num):
     """store all the single value to one table"""
-    if int(phase_num) > 0:
-        if stats_desc in TABLE.keys():
-            if metric in TABLE[stats_desc].keys():
-                TABLE[stats_desc][metric].update({phase_num: value})
-            else:
-                TABLE[stats_desc][metric] = {}
-                TABLE[stats_desc][metric].update({phase_num: value})
+    if stats_desc in TABLE.keys():
+        if metric in TABLE[stats_desc].keys():
+            TABLE[stats_desc][metric].update({phase_num: value})
+        else:
+            TABLE[stats_desc][metric] = {}
+            TABLE[stats_desc][metric].update({phase_num: value})
 
 def plot_metric_single_value(stats_desc, outdir, num_phases):
     """Plot chart and save it as PNG file"""
@@ -318,8 +317,8 @@ def plot_all_phases(db_name, host_ip, bucket_name):
     num_phases = len(phases)
     run_id = ''
 
-    for i in range(num_phases):
-        if i == 0:
+    for i in range(num_phases)[1:]:
+        if i == 1:
             run_id = phases[i]['run_id']
 
         start_time = phases[i].values()[0]
