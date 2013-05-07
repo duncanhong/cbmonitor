@@ -202,7 +202,8 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
             values.append(value)
             if value is not None:
                 sample_count = sample_count + 1
-                sum = sum + value
+                if sum == 0:
+                    sum = sum + value
 
         if sample_count >= 12 and sum > 0:
             # Substract first timestamp; conver to seconds
@@ -230,12 +231,13 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
 def store_metric_single_value(metric, stats_desc, value, phase_num):
     """store all the single value to one table"""
-    if stats_desc in TABLE.keys():
-        if metric in TABLE[stats_desc].keys():
-            TABLE[stats_desc][metric].update({phase_num: value})
-        else:
-            TABLE[stats_desc][metric] = {}
-            TABLE[stats_desc][metric].update({phase_num: value})
+    if int(phase_num) > 0:
+        if stats_desc in TABLE.keys():
+            if metric in TABLE[stats_desc].keys():
+                TABLE[stats_desc][metric].update({phase_num: value})
+            else:
+                TABLE[stats_desc][metric] = {}
+                TABLE[stats_desc][metric].update({phase_num: value})
 
 def plot_metric_single_value(stats_desc, outdir, num_phases):
     """Plot chart and save it as PNG file"""
