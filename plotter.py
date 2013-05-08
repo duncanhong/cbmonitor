@@ -27,6 +27,8 @@ NS_STATS_OT = ["cpu_utilization_rate", "cmd_set", "cmd_get", "replication_docs_r
 
 ATOP_STATS_OT = ["cpu_beam", "cpu_mc", "swap", "rsize_beam", "rsize_mc", "rddsk", "wrdsk"]
 
+ATOP_STATS_AVG = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc", "swap"]
+
 ATOP_STATS_90 = ["cpu_beam", "cpu_mc", "rsize_beam", "rsize_mc"]
 
 VIEW_STATS_OT = ["query_latency"]
@@ -107,6 +109,17 @@ def get_query(metric, host_ip, bucket_name, start_time, end_time):
                         "fv": [host_ip]
                        }
         query["over_time"] = query_params
+
+    if metric in ATOP_STATS_AVG:
+        query_params = { "group": 300000,
+                        "ptr": '/{0}'.format(metric),
+                        "reducer": "avg",
+                        "from": start_time,
+                        "to": end_time,
+                        "f": ["/ip"],
+                        "fv": [host_ip]
+                       }
+        query["average"] = query_params
 
     if metric in ATOP_STATS_90:
         query_params = { "group": 300000,
