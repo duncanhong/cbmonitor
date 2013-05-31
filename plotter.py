@@ -185,7 +185,7 @@ def plot_90th(query_key, db, metric, query, phase_num):
     if query_key in query.keys():
         response = db.query(query[query_key])
         data = dict((k, v[0]) for k, v in response.iteritems())
-        def response
+        del response
         values = list()
 
         for timestamp, value in data.iteritems():
@@ -206,7 +206,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
 
         # convert data and generate sorted lists of timestamps and values
         data = dict((k, v[0]) for k, v in response.iteritems())
-
+        del response
         timestamps = list()
         values = list()
         sample_count = 0
