@@ -165,11 +165,12 @@ def plot_avg(query_key, db, metric, query, phase_num):
     if query_key in query.keys():
         response = db.query(query[query_key])
         data = dict((k, v[0]) for k, v in response.iteritems())
+        del response
         values = list()
 
         for timestamp, value in data.iteritems():
             values.append(value)
-
+        del data
         values = [x for x in values if x is not None]
         sum = 0
         average_value = None
@@ -184,11 +185,12 @@ def plot_90th(query_key, db, metric, query, phase_num):
     if query_key in query.keys():
         response = db.query(query[query_key])
         data = dict((k, v[0]) for k, v in response.iteritems())
+        def response
         values = list()
 
         for timestamp, value in data.iteritems():
             values.append(value)
-
+        del data
         values = [x for x in values if x is not None]
         value = None
         if len(values) >= 1:
@@ -217,6 +219,7 @@ def plot_metric(db, metric, query, outdir, phase_num, phase_desc):
                 sample_count = sample_count + 1
                 if sum == 0:
                     sum = sum + value
+        del data
 
         if sample_count >= 12 and sum > 0:
             # Substract first timestamp; conver to seconds
