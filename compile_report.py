@@ -55,4 +55,4 @@ for host_ip in host_ips:
         else:
             os.system("rm -rf {0}_{1}_{2}*".format(db_name, host_ip, bucket_name))
             os.system("mv {0} {1}_{2}_{3}".format(path, db_name, host_ip, bucket_name))
-            os.system("tar cvf {0}_{1}_{3}.zip {0}_{1}_{3}".format(db_name, host_ip, bucket_name))
+            os.system("tar cvf {0}_{1}_{2}.zip {0}_{1}_{2}".format(db_name, host_ip, bucket_name))
